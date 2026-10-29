@@ -4,15 +4,16 @@
  * Barlow Semi Condensed uppercase headings, chamfered (cut-corner) buttons and cards.
  */
 :root {
-	--bg: #0a0d13;
-	--bg-2: #0e121a;
-	--panel: #0c0f16;
-	--panel-2: #121722;
-	--line: rgba(255, 255, 255, 0.1);
-	--line-2: rgba(255, 255, 255, 0.18);
-	--text: #e8ebf2;
-	--muted: #a3abbd;
-	--faded: #8790a5;
+	/* light on darker: near-black backgrounds, bright text, light greys for secondary text */
+	--bg: #050608;
+	--bg-2: #0b0d11;
+	--panel: #0b0d11;
+	--panel-2: #12151b;
+	--line: rgba(255, 255, 255, 0.12);
+	--line-2: rgba(255, 255, 255, 0.22);
+	--text: #f5f7fa;
+	--muted: #bcc3d0;
+	--faded: #9aa2b2;
 	--cyan: #4cc9d4; /* softened from their #1AEEFF so it isn't highlighter-bright */
 	--cyan-2: #19c3d1;
 	--indigo: #646cfd;
@@ -22,12 +23,12 @@
 
 	/* seat states: free = soft cyan tint with a cyan edge, taken = quiet dark grey */
 	--free: rgba(76, 201, 212, 0.32);
-	--free-edge: rgba(232, 235, 242, 0.55);
-	--free-ink: #e8ebf2;
+	--free-edge: rgba(245, 247, 250, 0.7);
+	--free-ink: #f5f7fa;
 	--free-glow: transparent;
-	--in-use: #161a23;
-	--in-use-edge: #232937;
-	--in-use-ink: #5d6679;
+	--in-use: #15181f;
+	--in-use-edge: #20242d;
+	--in-use-ink: #6b7384;
 	--reserved: #646cfd;
 	--reserved-ink: #fff;
 	--offline: #121722;

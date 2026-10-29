@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import SeatMap from '#lib/components/SeatMap.svelte';
+	import WebsiteWidget from '#lib/components/WebsiteWidget.svelte';
 	import { counts } from '#lib/format.ts';
 	import { FLOORS, FLOOR_META, type CafeState, type PC, type Status } from '#lib/types.ts';
 
@@ -45,6 +46,8 @@
 			const s = await r.json();
 			if (saving === 1 && !painting) pcs = s.pcs;
 			onsaved?.();
+			// keep the website-widget preview in step
+			(window as unknown as { GGSeats?: { refresh: () => void } }).GGSeats?.refresh();
 		} catch {
 			failed = true;
 		} finally {
@@ -226,6 +229,8 @@
 		<a class="link" href="/admin/layout">Edit floor plan</a>
 		<form method="POST" action="/admin/logout"><button class="link">Log out</button></form>
 	</footer>
+
+	<WebsiteWidget />
 </div>
 
 {#if toast}

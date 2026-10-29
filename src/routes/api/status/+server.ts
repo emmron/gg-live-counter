@@ -5,7 +5,9 @@ import type { RequestHandler } from './$types';
 
 const noStore = { 'cache-control': 'no-store' };
 
-export const GET: RequestHandler = async () => json(await getState(), { headers: noStore });
+/** Public read. Open to any origin so the WordPress widget can fetch it. */
+export const GET: RequestHandler = async () =>
+	json(await getState(), { headers: { ...noStore, 'access-control-allow-origin': '*' } });
 
 function requireAdmin(locals: App.Locals) {
 	if (!locals.admin) error(401, 'Not logged in');
