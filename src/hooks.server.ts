@@ -23,7 +23,10 @@ function clientIp(event: Parameters<Handle>[0]['event']) {
 export const handle: Handle = async ({ event, resolve }) => {
 	const ip = clientIp(event);
 	event.locals.admin =
-		verifyToken(event.cookies.get(COOKIE)) || ADMIN_IPS.has(ip) || (dev && LOCAL.has(ip));
+		verifyToken(event.cookies.get(COOKIE)) ||
+		ADMIN_IPS.has(ip) ||
+		// localhost is the owner during development (set DEV_AS_GUEST=1 to see the site as a visitor)
+		(dev && LOCAL.has(ip) && !process.env.DEV_AS_GUEST);
 
 	const path = event.url.pathname;
 

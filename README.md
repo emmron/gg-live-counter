@@ -29,6 +29,7 @@ npm run dev       # http://localhost:5173 (localhost gets the owner dashboard; a
 npm run check
 ```
 Without database env vars, data lives in memory and resets on restart. Dev password: `admin`.
+To see the site as a logged-out visitor locally (e.g. the login page), run `DEV_AS_GUEST=1 npm run dev`.
 
 ## Deploy to Vercel
 1. **Import:** Vercel → Add New → Project → import this GitHub repo. Framework is detected as SvelteKit; no build settings to change (Node 24 is set in `package.json`).
