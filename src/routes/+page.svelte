@@ -15,7 +15,7 @@
 </svelte:head>
 
 {#if data.owner}
-	<OwnerShell initial={data.state} />
+	<OwnerShell initial={data.state} storageMissing={data.storageMissing} />
 {:else}
 	<PublicView initial={data.state} />
 {/if}

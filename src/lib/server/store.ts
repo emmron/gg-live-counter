@@ -9,6 +9,9 @@ const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
 const token = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
 const redis = url && token ? new Redis({ url, token }) : null;
 
+/** False when no database is connected (data then lives in memory and is lost on restart). */
+export const persistent = !!redis;
+
 if (!redis) console.warn('[gg-status] No Redis env vars set – using in-memory store (resets on restart).');
 
 const mem = globalThis as unknown as { __ggState?: CafeState };

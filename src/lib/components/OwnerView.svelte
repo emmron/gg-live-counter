@@ -9,7 +9,7 @@
 		/** Called after every successful save, e.g. to refresh the live preview. */
 		onsaved?: () => void;
 		/** Live counts for the side menu */
-		oncounts?: (free: number, total: number) => void;
+		oncounts?: (c: ReturnType<typeof counts>) => void;
 		/** False while another menu section is showing (keyboard shortcuts pause) */
 		active?: boolean;
 	}
@@ -35,7 +35,7 @@
 	const gridCols = $derived(Math.max(...pcs.map((p) => p.x + 1)));
 	const taken = (s: Status) => s !== 'free';
 
-	$effect(() => oncounts?.(c.zones.pc.free, c.zones.pc.total));
+	$effect(() => oncounts?.(c));
 
 	async function send(body: unknown) {
 		saving++;
