@@ -259,13 +259,12 @@
 	}
 	.key {
 		display: inline-block;
-		width: 20px;
-		height: 17px;
-		border-radius: 16% 16% 40% 40%;
+		width: 18px;
+		height: 16px;
+		border-radius: 5px;
 		margin-left: 0.3rem;
 	}
 	.key.free {
-		background: var(--free);
 		border: 1.5px solid var(--free-edge);
 	}
 	.key.taken {

@@ -3,7 +3,7 @@
 	import SeatMap from '#lib/components/SeatMap.svelte';
 	import { ago, counts } from '#lib/format.ts';
 	import { openStatus } from '#lib/hours.ts';
-	import { FLOORS, FLOOR_META, ZONE_META, type CafeState } from '#lib/types.ts';
+	import { FLOORS, FLOOR_META, type CafeState } from '#lib/types.ts';
 
 	let { initial }: { initial: CafeState } = $props();
 
@@ -14,7 +14,7 @@
 	let picked = $state<string | null>(null);
 
 	const c = $derived(counts(cafe.pcs));
-	const pcsFree = $derived(c.zones.pc);
+	const pcs = $derived(c.zones.pc);
 	const hours = $derived(openStatus(now));
 	const gridCols = $derived(Math.max(...cafe.pcs.map((p) => p.x + 1)));
 	const pickedPc = $derived(cafe.pcs.find((p) => p.id === picked) ?? null);
@@ -53,56 +53,27 @@
 </script>
 
 <div class="page">
-	<header class="nav">
-		<a href="https://gggaminglounge.com.au/" class="logo" aria-label="GG Gaming Lounge home">
-			<img src="/brand/logo.png" alt="GG Gaming Lounge, No retreat, no surrender" />
+	<header>
+		<a href="https://gggaminglounge.com.au/" aria-label="GG Gaming Lounge home">
+			<img class="logo" src="/brand/logo.png" alt="GG Gaming Lounge" />
 		</a>
-		<div class="nav-right">
-			<span class="open" class:closed={!hours.open}><i></i>{hours.text}</span>
-			<a class="btn primary" href="https://gggaminglounge.com.au/contact-us/">Contact us</a>
-		</div>
+		<span class="open">{hours.text}</span>
 	</header>
 
-	<section class="hero">
-		<div class="hero-text">
-			<p class="eyebrow"><span class="live"></span> Live right now</p>
-			<h1>
-				<span class="num" class:none={pcsFree.free === 0}>{pcsFree.free}</span> PCs free
-			</h1>
-			<p class="of-line">out of {pcsFree.total}</p>
-			<p class="sub">
-				{#if pcsFree.free === 0}
-					Every PC is taken right now. Check back soon.
-				{:else}
-					Walk in and play. 3/24 Mercer Ln, Joondalup.
-				{/if}
-			</p>
-			<div class="tiles">
-				{#each FLOORS as fl (fl)}
-					{@const f = floorFree(fl)}
-					{#if f.total}
-						<div class="tile">
-							<span class="ic cut">{fl === 'ground' ? 'G' : '↑'}</span>
-							<span><b>{f.free}</b> free {FLOOR_META[fl].name.toLowerCase()}</span>
-						</div>
-					{/if}
-				{/each}
-				{#each ['sim', 'console'] as const as z (z)}
-					{#if c.zones[z].total}
-						<div class="tile">
-							<span class="ic cut">{z === 'sim' ? '🏁' : '🎮'}</span>
-							<span><b>{c.zones[z].free}/{c.zones[z].total}</b> {ZONE_META[z].name.toLowerCase()} free</span>
-						</div>
-					{/if}
-				{/each}
-			</div>
-		</div>
-		<img class="spartan" src="/brand/spartan.png" alt="" />
+	<section class="summary">
+		<h1>
+			{#if pcs.free === 0}All PCs are taken{:else}{pcs.free} of {pcs.total} PCs free{/if}
+		</h1>
+		<p>
+			{#each FLOORS as fl, i (fl)}
+				{@const f = floorFree(fl)}
+				{#if f.total}{i ? ' · ' : ''}{FLOOR_META[fl].name}: {f.free} free{/if}
+			{/each}
+			{#if c.zones.sim.total} · Racing sims: {c.zones.sim.free} of {c.zones.sim.total}{/if}
+			{#if c.zones.console.total} · Consoles: {c.zones.console.free} of {c.zones.console.total}{/if}
+		</p>
+		{#if cafe.announcement}<p class="announce">{cafe.announcement}</p>{/if}
 	</section>
-
-	{#if cafe.announcement}
-		<p class="announce cut">{cafe.announcement}</p>
-	{/if}
 
 	{#each FLOORS as fl (fl)}
 		{@const floorPcs = cafe.pcs.filter((p) => p.floor === fl)}
@@ -110,196 +81,90 @@
 			<section class="floor">
 				<h2>{FLOOR_META[fl].name}</h2>
 				<div class="scroll">
-					<SeatMap pcs={floorPcs} floor={fl} {now} minCols={gridCols} onseat={(id) => (picked = picked === id ? null : id)} />
+					<SeatMap
+						pcs={floorPcs}
+						floor={fl}
+						{now}
+						minCols={gridCols}
+						onseat={(id) => (picked = picked === id ? null : id)}
+					/>
 				</div>
 			</section>
 		{/if}
 	{/each}
 
 	<div class="below">
-		<ul class="legend">
-			<li><i class="free"></i>Free</li>
-			<li><i class="taken"></i>Taken</li>
-			<li><i class="ring sim"></i>Racing sim</li>
-			<li><i class="ring console"></i>Console</li>
-		</ul>
-		<p class="picked" aria-live="polite">
+		<span class="key"><i class="free"></i>Free</span>
+		<span class="key"><i class="taken"></i>Taken</span>
+		<span class="status" aria-live="polite">
 			{#if pickedPc}
-				<b>{pickedPc.label}</b> is {pickedPc.status === 'free' ? 'free' : 'taken'}
+				{pickedPc.label} is {pickedPc.status === 'free' ? 'free' : 'taken'}
 			{:else}
-				<span class="muted">{offline ? 'Reconnecting…' : `Updated ${ago(cafe.updatedAt, now)}`}</span>
+				{offline ? 'Reconnecting…' : `Updated ${ago(cafe.updatedAt, now)}`}
 			{/if}
-		</p>
+		</span>
 	</div>
 
 	<footer>
-		<div class="detail"><span class="ic cut">🕑</span><span>Mon–Thu 12PM–12AM · Fri 12PM–1AM<br />Sat 10AM–1AM · Sun 10AM–12AM</span></div>
-		<div class="detail"><span class="ic cut">📍</span><span>3/24 Mercer Ln, Joondalup WA 6027</span></div>
-		<div class="detail"><span class="ic cut">✉</span><a href="mailto:info@gggaminglounge.com.au">info@gggaminglounge.com.au</a></div>
+		<p>3/24 Mercer Ln, Joondalup · <a href="mailto:info@gggaminglounge.com.au">info@gggaminglounge.com.au</a></p>
+		<p>Mon–Thu 12pm–12am · Fri 12pm–1am · Sat 10am–1am · Sun 10am–12am</p>
 	</footer>
 </div>
 
 <style>
 	.page {
-		max-width: 1280px;
+		max-width: 1200px;
 		margin: 0 auto;
-		padding: 0 clamp(16px, 2.5vw, 28px) 2.5rem;
-		position: relative;
-	}
-	.page::before {
-		/* their blue mesh-gradient glow */
-		content: '';
-		position: absolute;
-		inset: 0 -20vw auto;
-		height: 640px;
-		background: url('/brand/mesh.png') center top / cover no-repeat;
-		opacity: 0.35;
-		z-index: -1;
-		pointer-events: none;
-		mask-image: linear-gradient(180deg, #000 40%, transparent);
+		padding: 0 clamp(16px, 3vw, 32px) 2.5rem;
 	}
 
-	.nav {
+	header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
-		padding: 1rem 0;
+		padding: 1.25rem 0;
+		border-bottom: 1px solid var(--line);
 	}
-	.logo img {
-		height: 52px;
+	.logo {
+		height: 44px;
 		display: block;
 	}
-	.nav-right {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-	}
 	.open {
-		font-weight: 500;
+		color: var(--muted);
 		font-size: 0.95rem;
-		display: flex;
-		align-items: center;
-		gap: 0.45rem;
-	}
-	.open i {
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
-		background: var(--cyan);
-	}
-	.open.closed i {
-		background: #ff4d6d;
-		box-shadow: none;
 	}
 
-	.hero {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
-		padding: 1.5rem 0 1rem;
-	}
-	.eyebrow {
-		margin: 0 0 0.8rem;
-		font-family: var(--display);
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: var(--muted);
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-	.live {
-		width: 9px;
-		height: 9px;
-		border-radius: 50%;
-		background: var(--cyan);
-		animation: pulse 2.4s infinite;
-	}
-	@keyframes pulse {
-		50% {
-			opacity: 0.3;
-		}
+	.summary {
+		padding: 2rem 0 0.5rem;
 	}
 	h1 {
 		margin: 0;
-		font-size: clamp(2.6rem, 6vw, 4.4rem);
-		line-height: 1;
+		font-size: clamp(2rem, 4.5vw, 3rem);
+		line-height: 1.1;
 	}
-	.num {
-		color: var(--text);
-	}
-	.num.none {
-		color: #fff;
-		text-shadow: none;
-	}
-	.of-line {
-		margin: 0.35rem 0 0;
+	.summary p {
+		margin: 0.6rem 0 0;
 		color: var(--muted);
-		font-size: 1.05rem;
-	}
-	.sub {
-		margin: 0.6rem 0 1.4rem;
 		font-size: 1rem;
-		max-width: 34rem;
 	}
-	.tiles {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 15rem));
-		gap: 0.75rem 1.5rem;
-	}
-	.tile,
-	.detail {
-		display: flex;
-		align-items: center;
-		gap: 0.65rem;
-		font-size: 0.95rem;
-	}
-	.tile b {
-		font-family: var(--display);
-		font-size: 1.25rem;
-	}
-	.ic {
-		--cut: 9px;
-		width: 42px;
-		height: 38px;
-		display: grid;
-		place-items: center;
-		background: #fff;
-		color: #000;
-		font-family: var(--display);
-		font-weight: 700;
-		font-size: 1.1rem;
-		flex-shrink: 0;
-	}
-	.spartan {
-		height: clamp(200px, 24vw, 320px);
-		opacity: 0.9;
-		margin-right: 2%;
-	}
-
-	.announce {
-		--cut: 14px;
-		margin: 0.5rem 0 1.25rem;
-		background: #10151f;
+	.summary .announce {
+		margin-top: 1rem;
+		color: var(--text);
+		padding-left: 0.8rem;
 		border-left: 3px solid var(--line-2);
-		color: #fff;
-		font-family: var(--display);
-		font-weight: 600;
-		font-size: 1.15rem;
-		text-transform: none;
-		letter-spacing: 0;
-		padding: 0.8rem 1.2rem;
 	}
 
 	.floor {
-		margin-top: 1.4rem;
+		margin-top: 2rem;
 	}
-	.floor h2 {
+	h2 {
 		margin: 0 0 0.6rem;
-		font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 1.05rem;
+		font-weight: 600;
+		text-transform: none;
+		letter-spacing: 0;
 	}
 	.scroll {
 		overflow-x: auto;
@@ -309,76 +174,43 @@
 	.below {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		gap: 1.4rem;
 		flex-wrap: wrap;
-		gap: 0.8rem;
 		margin-top: 1rem;
+		font-size: 0.95rem;
 	}
-	.legend {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.4rem;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		font-weight: 500;
-	}
-	.legend li {
+	.key {
 		display: flex;
 		align-items: center;
 		gap: 0.45rem;
 	}
-	.legend i {
-		width: 20px;
-		height: 17px;
-		border-radius: 16% 16% 40% 40%;
+	.key i {
+		width: 18px;
+		height: 16px;
+		border-radius: 5px;
 	}
-	.legend .free {
-		background: var(--free);
+	.key .free {
 		border: 1.5px solid var(--free-edge);
 	}
-	.legend .taken {
+	.key .taken {
 		background: var(--in-use);
-		border: 1.5px solid var(--in-use-edge);
 	}
-	.legend .ring {
-		border: 2.5px solid;
-		border-radius: 30%;
-	}
-	.legend .sim {
-		border-color: var(--sim);
-	}
-	.legend .console {
-		border-color: var(--console);
-	}
-	.picked {
-		margin: 0;
-	}
-	.muted {
+	.status {
+		margin-left: auto;
 		color: var(--muted);
 	}
 
 	footer {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem 2.5rem;
 		margin-top: 2.5rem;
-		padding-top: 1.5rem;
+		padding-top: 1.25rem;
 		border-top: 1px solid var(--line);
+		color: var(--muted);
+		font-size: 0.9rem;
 	}
-	.detail a {
-		color: var(--text);
+	footer p {
+		margin: 0.25rem 0;
 	}
-
-	@media (max-width: 760px) {
-		.spartan {
-			display: none;
-		}
-		.nav .btn {
-			display: none;
-		}
-		.logo img {
-			height: 42px;
-		}
+	footer a {
+		color: var(--muted);
 	}
 </style>

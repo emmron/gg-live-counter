@@ -239,18 +239,13 @@
 	}}
 >
 	<div class="hall">
-		<!-- the long wall every row faces, with the venue's blue LED strip -->
-		<div class="wall top"><span>{meta.top}</span></div>
+		<!-- the long wall every row faces -->
+		<div class="wall top"></div>
 
-		<div class="grid" class:bottom-desk={bottomDesk} bind:this={gridEl} style="grid-template-columns:{colTemplate};grid-template-rows:repeat({rows},auto)">
+		<div class="grid" bind:this={gridEl} style="grid-template-columns:{colTemplate};grid-template-rows:repeat({rows},auto)">
 			{#each bands as b (b.y)}
 				<div class="band" style="grid-column:{1 + off} / span {cols};grid-row:{b.y + 1} / span {b.span}">
-					{#if floor === 'upstairs'}
-						<span class="void-label">Open to ground floor</span>
-					{:else}
-						<span class="walk-label">Walkway</span>
-						{#if meta.side && b.y + b.span === rows - 1}<span class="entrance-label">{meta.side} →</span>{/if}
-					{/if}
+					{#if meta.side && b.y + b.span === rows - 1}<span class="entrance-label">{meta.side} →</span>{/if}
 				</div>
 			{/each}
 
@@ -326,247 +321,132 @@
 		touch-action: none;
 	}
 	.mode-owner .seat {
-		cursor: pointer;
 		-webkit-touch-callout: none;
 	}
 	.mode-owner .seat:active {
 		transform: scale(0.94);
 	}
-	.mode-layout {
-		padding-right: 0;
-		/* (kept for layout mode) */
-	}
 
+	/* the room: a plain card; the wall the rows face is a thin line at the top */
 	.hall {
 		position: relative;
 		border: 1px solid var(--line);
-		border-radius: 14px;
-		background:
-			radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0) 0 0 / 18px 18px,
-			linear-gradient(180deg, #0d1119, #0a0d14);
-		padding: 0 10px 8px;
-		overflow: hidden;
-	}
-	.wall {
-		position: relative;
-		height: 22px;
-		display: grid;
-		place-items: center;
-		margin: 0 -10px;
+		border-radius: 12px;
+		background: var(--bg-2);
+		padding: 0 12px 6px;
 	}
 	.wall.top {
-		border-bottom: 2px solid rgba(80, 120, 255, 0.55);
-		box-shadow: none;
-		background: linear-gradient(180deg, #161c2b, #0f1420);
+		height: 0;
+		margin: 0 -12px;
+		border-top: 3px solid var(--line-2);
+		border-radius: 12px 12px 0 0;
 	}
 	.wall.bottom {
-		border-top: 2px solid var(--line);
-		background: #0f1420;
-		margin-top: 8px;
-		margin-bottom: -8px;
-	}
-	.wall span {
-		font-family: var(--display);
-		font-family: 'Inter', system-ui, sans-serif;
-		font-weight: 500;
-		font-size: 0.78rem;
-		color: var(--muted);
-		white-space: nowrap;
+		margin: 6px -12px -6px;
+		border-top: 3px solid var(--line-2);
 	}
 	.wall.bottom span {
-		color: var(--muted);
+		display: none;
 	}
 
 	.grid {
 		display: grid;
 		column-gap: var(--gap-x);
 		row-gap: var(--gap-y);
-		padding: 14px 0 10px;
+		padding: 14px 0 8px;
 		margin: 0 auto;
 	}
-
 	.mode-layout .grid {
-		row-gap: 10px;
 		padding-top: 10px;
 	}
 
 	.rowl {
 		align-self: center;
-		text-align: center;
-		font-family: var(--display);
-		font-weight: 700;
-		font-size: 15px;
+		text-align: left;
+		font-weight: 600;
+		font-size: 14px;
 		color: var(--muted);
 	}
 
+	/* empty rows (walkway / open void): just space */
 	.band {
-		min-height: 30px;
-		border-radius: 6px;
+		min-height: 26px;
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: flex-end;
 		position: relative;
-		z-index: 0;
-	}
-	.floor-ground .band {
-		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.025) 15%, rgba(255, 255, 255, 0.025) 85%, transparent);
-	}
-	.floor-upstairs .band {
-		background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 2px, transparent 2px 9px);
-		/* railings either side of the void */
-		border-top: 3px solid transparent;
-		border-bottom: 3px solid transparent;
-		border-image: repeating-linear-gradient(90deg, #6b7486 0 3px, #333a48 3px 14px) 3;
 	}
 	.entrance-label {
-		position: absolute;
-		right: 8px;
-		font-family: var(--display);
-		font-weight: 700;
-		font-family: 'Inter', system-ui, sans-serif;
-		font-weight: 600;
 		font-size: 0.85rem;
-		color: var(--muted);
-	}
-	.walk-label,
-	.void-label {
-		font-family: var(--display);
-		font-family: 'Inter', system-ui, sans-serif;
-		font-size: 0.8rem;
 		color: var(--faded);
 	}
 
-
-
 	.cell {
 		aspect-ratio: 1;
-		border: 1px dashed var(--line);
-		border-radius: 8px;
+		border: 1px dashed var(--line-2);
+		border-radius: 7px;
 	}
 	.cell.drop {
-		border-color: var(--accent-2);
-		background: color-mix(in srgb, var(--accent-2) 15%, transparent);
+		border-color: var(--free-edge);
 	}
 
+	/* ---- seats ---- */
 	.seat {
-		--seat-bg: var(--free);
 		aspect-ratio: 1;
 		position: relative;
-		z-index: 1;
 		padding: 0;
 		border: 1.5px solid transparent;
+		border-radius: 7px;
 		display: grid;
 		place-items: center;
-		align-content: center;
 		cursor: pointer;
-		font-family: var(--display);
+		font-family: 'Inter', system-ui, sans-serif;
 		font-weight: 600;
-		font-size: clamp(13px, 1.25vw, 17px);
-		background: var(--seat-bg);
+		font-size: clamp(12px, 1.15vw, 16px);
 		transition:
-			transform 0.12s,
-			box-shadow 0.15s,
-			background 0.2s;
+			background 0.15s,
+			border-color 0.15s;
 	}
-	.f-down {
-		border-radius: 42% 42% 16% 16%;
-	}
-	.f-up {
-		border-radius: 16% 16% 42% 42%;
-	}
-
-
-	.z-sim {
-		border-radius: 30%;
-		border-color: var(--sim);
-	}
-	.z-console {
-		border-radius: 30%;
-		border-color: var(--console);
-	}
-	.z-sim.s-in_use,
-	.z-console.s-in_use {
-		border-color: color-mix(in srgb, currentColor 40%, transparent);
-	}
-	.z-sim .lbl,
-	.z-console .lbl {
-		font-size: 0.7em;
-		font-weight: 700;
-		letter-spacing: 0.02em;
-	}
-	.z-sim,
-	.z-console {
-		border-width: 2px;
-	}
-
-	.seat:hover {
-		filter: brightness(1.25);
-	}
-	.seat:focus-visible {
-		outline: 2px solid white;
-		outline-offset: 2px;
-	}
-
+	/* free: outline only */
 	.s-free {
-		--seat-bg: var(--free);
+		background: transparent;
 		border-color: var(--free-edge);
 		color: var(--free-ink);
 	}
+	/* taken: flat and quiet */
 	.s-in_use {
-		--seat-bg: var(--in-use);
-		border-color: var(--in-use-edge);
+		background: var(--in-use);
 		color: var(--in-use-ink);
 	}
-	.s-reserved {
-		--seat-bg: var(--reserved);
-		color: #2a1a02;
+	.z-sim .lbl,
+	.z-console .lbl {
+		font-size: 0.66em;
+		letter-spacing: -0.01em;
 	}
-	.s-offline {
-		--seat-bg: #121722;
-		border-color: var(--line);
-		border-style: dashed;
-		color: var(--muted);
-	}
-
 	.lbl {
 		line-height: 1;
 	}
-	.x {
-		position: absolute;
-		inset: 0;
-		display: grid;
-		place-items: center;
-		font-size: 1.5em;
-		opacity: 0.35;
-	}
-	.eta {
-		position: absolute;
-		bottom: 1px;
-		font-size: 0.6em;
-		font-weight: 600;
-	}
 
+	.seat:hover {
+		filter: brightness(1.3);
+	}
+	.seat:focus-visible {
+		outline: 2px solid var(--text);
+		outline-offset: 2px;
+	}
 	.sel {
-		outline: 3px solid white;
+		outline: 2px solid var(--text);
 		outline-offset: 2px;
 		z-index: 2;
 	}
-	.cursor::after {
-		content: '';
-		position: absolute;
-		right: -4px;
-		top: -4px;
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
-		background: white;
-		box-shadow: none;
+	.cursor {
+		box-shadow: inset 0 0 0 2px var(--text);
 	}
 	.dragging {
 		opacity: 0.45;
 	}
 	.seat.drop {
-		outline: 2px dashed var(--accent-2);
+		outline: 2px dashed var(--free-edge);
 		outline-offset: 2px;
 	}
 	.mode-layout .seat {
@@ -575,8 +455,8 @@
 
 	.box {
 		position: absolute;
-		border: 1px solid var(--accent-2);
-		background: color-mix(in srgb, var(--accent-2) 15%, transparent);
+		border: 1px solid var(--free-edge);
+		background: rgba(76, 201, 212, 0.1);
 		border-radius: 4px;
 		pointer-events: none;
 		z-index: 5;
@@ -588,10 +468,7 @@
 		}
 		/* phones: keep seats tappable, the map scrolls sideways inside its card */
 		.mode-public {
-			min-width: calc(var(--cols) * 26px + 70px);
-		}
-		.eta {
-			display: none;
+			min-width: calc(var(--cols) * 26px + 60px);
 		}
 	}
 </style>
