@@ -23,6 +23,8 @@
 		onpaint?: (id: string, first: boolean) => void;
 		/** Owner mode: tap/drag finished */
 		onpaintend?: () => void;
+		/** Owner mode: mouse is over this seat (null = left it) */
+		onhover?: (id: string | null) => void;
 	}
 
 	let {
@@ -39,7 +41,8 @@
 		onbox,
 		onmove,
 		onpaint,
-		onpaintend
+		onpaintend,
+		onhover
 	}: Props = $props();
 	const owner = $derived(mode === 'owner');
 
@@ -280,6 +283,8 @@
 					aria-pressed={mode === 'public' ? undefined : selSet.has(pc.id)}
 					tabindex={mode === 'public' || owner ? 0 : -1}
 					onpointerdown={(e) => seatDown(e, pc)}
+					onpointerenter={() => onhover?.(pc.id)}
+					onpointerleave={() => onhover?.(null)}
 					onclick={(e) => {
 						if (owner) {
 							// keyboard (Enter/Space) on a focused seat

@@ -33,7 +33,7 @@
 <style>
 	.split {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: 3fr 2fr;
 		height: 100vh;
 		height: 100dvh;
 	}

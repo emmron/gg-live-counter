@@ -20,12 +20,14 @@
 	let toast = $state<string | null>(null);
 	let toastTimer: ReturnType<typeof setTimeout>;
 	let inputEl: HTMLInputElement;
+	let hovered = $state<string | null>(null);
 
 	/** Each change remembers what the seats were, so Undo can put them back. */
 	let undoStack: { ids: string[]; was: Status[] }[] = [];
 
 	const byId = $derived(new Map(pcs.map((p) => [p.id, p])));
 	const c = $derived(counts(pcs));
+	const hoverPc = $derived(hovered ? byId.get(hovered) : null);
 	const gridCols = $derived(Math.max(...pcs.map((p) => p.x + 1)));
 	const taken = (s: Status) => s !== 'free';
 
@@ -174,10 +176,14 @@
 <div class="owner">
 	<header>
 		<div>
-			<h1>Click a seat to switch it</h1>
+			<h1>Someone sat down or left? Click their seat.</h1>
 			<p class="legend">
-				<span class="key free"></span> Free <span class="key taken"></span> Taken
-				<span class="dim">· someone sits down or leaves → click their seat</span>
+				{#if hoverPc}
+					Click to mark <b>{hoverPc.label}</b> as
+					<b class={hoverPc.status === 'free' ? 'to-taken' : 'to-free'}>{hoverPc.status === 'free' ? 'taken' : 'free'}</b>
+				{:else}
+					<span class="key free"></span> Free <span class="key taken"></span> Taken
+				{/if}
 			</p>
 		</div>
 		<div class="count">
@@ -186,16 +192,14 @@
 	</header>
 
 	<form class="type" class:bad={typedError} onsubmit={submitTyped}>
-		<label for="seat">Or type a seat number:</label>
 		<input
-			id="seat"
 			bind:this={inputEl}
 			bind:value={typed}
-			placeholder="e.g. B7"
+			placeholder="Or type a seat, e.g. B7, and press Enter"
+			aria-label="Seat number"
 			autocomplete="off"
 			spellcheck="false"
 		/>
-		<button class="btn primary">Switch</button>
 	</form>
 
 	{#each FLOORS as fl (fl)}
@@ -208,6 +212,7 @@
 				mode="owner"
 				{onpaint}
 				{onpaintend}
+				onhover={(id) => (hovered = id)}
 			/>
 		</section>
 	{/each}
@@ -232,7 +237,6 @@
 
 <style>
 	.owner {
-		max-width: 920px;
 		display: flex;
 		flex-direction: column;
 		gap: 1.1rem;
@@ -271,8 +275,14 @@
 		background: var(--in-use);
 		border: 1.5px solid var(--in-use-edge);
 	}
-	.dim {
-		color: var(--muted);
+	.legend b {
+		font-weight: 700;
+	}
+	.to-taken {
+		color: var(--in-use-ink);
+	}
+	.to-free {
+		color: var(--free-ink);
 	}
 	.count {
 		display: flex;
@@ -301,21 +311,13 @@
 		align-items: center;
 		gap: 0.6rem;
 	}
-	.type label {
-		color: var(--muted);
-		white-space: nowrap;
-	}
 	.type input {
-		width: 9rem;
+		width: min(100%, 24rem);
 		background: var(--panel-2);
 		border: 1px solid var(--line-2);
 		border-radius: 6px;
 		padding: 0.6rem 0.8rem;
-		font-family: var(--display);
-		font-weight: 700;
-		font-size: 1.15rem;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		font-size: 1rem;
 	}
 	.type input:focus {
 		outline: 2px solid var(--cyan);
