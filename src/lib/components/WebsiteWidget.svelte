@@ -37,9 +37,7 @@
 
 <section class="wp" aria-labelledby="wp-title">
 	<header>
-		<p class="kicker">Your website</p>
-		<h2 id="wp-title">Show live seats on gggaminglounge.com.au</h2>
-		<p class="lead">
+		<p class="lead" id="wp-title">
 			Add a live card to any page of your WordPress site. It updates itself every 30 seconds from this board, so
 			there’s nothing extra to keep up to date.
 		</p>
@@ -116,7 +114,7 @@
 
 <style>
 	.wp {
-		margin-top: 1.5rem;
+		margin-top: 1rem;
 		padding: 1.75rem;
 		border: 1px solid var(--line);
 		border-radius: 14px;
@@ -125,22 +123,8 @@
 	header {
 		max-width: 46rem;
 	}
-	.kicker {
-		margin: 0 0 0.35rem;
-		font-size: 0.85rem;
-		font-weight: 600;
-		color: var(--muted);
-	}
-	h2 {
-		margin: 0;
-		font-family: 'Inter', system-ui, sans-serif;
-		text-transform: none;
-		letter-spacing: -0.01em;
-		font-size: 1.45rem;
-		line-height: 1.25;
-	}
 	.lead {
-		margin: 0.6rem 0 0;
+		margin: 0;
 		color: var(--muted);
 	}
 

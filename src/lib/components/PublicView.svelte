@@ -123,6 +123,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
+		flex-wrap: wrap;
 		padding: 1.25rem 0;
 		border-bottom: 1px solid var(--line);
 	}

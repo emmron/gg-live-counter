@@ -213,13 +213,13 @@
 	/** Seat text: number only in lettered rows; sims show their number; consoles their type. */
 	function shortLabel(pc: PC) {
 		if (letterRows.has(pc.y)) return pc.label.replace(/^[A-Z]+/i, '');
-		if (pc.zone === 'sim') return 'SIM ' + (pc.label.replace(/^SIM-?/i, '') || '');
-		if (pc.zone === 'console') return (pc.label.replace(/-?\d+$/, '') || pc.label).replace(/^XBX$/i, 'XBOX');
+		if (pc.zone === 'sim') return 'S' + (pc.label.replace(/^SIM-?/i, '') || '');
+		if (pc.zone === 'console') return (pc.label.replace(/-?\d+$/, '') || pc.label).replace(/^XBX$/i, 'XB');
 		return pc.label;
 	}
 
 	const colTemplate = $derived(
-		layout ? `repeat(${cols},minmax(0,1fr))` : `24px repeat(${cols},minmax(0,1fr))`
+		layout ? `repeat(${cols},minmax(0,1fr))` : `clamp(14px, 3cqi, 24px) repeat(${cols},minmax(0,1fr))`
 	);
 	const gridCols = $derived(cols + off);
 </script>
@@ -314,8 +314,10 @@
 
 <style>
 	.wrap {
-		--gap-x: clamp(3px, 0.45vw, 6px);
-		--gap-y: 10px;
+		/* everything scales to the width the map actually has, so a floor always fits without scrolling */
+		container-type: inline-size;
+		--gap-x: clamp(2px, 0.5cqi, 6px);
+		--gap-y: clamp(6px, 1cqi, 10px);
 		position: relative;
 		touch-action: manipulation;
 		user-select: none;
@@ -369,7 +371,7 @@
 		align-self: center;
 		text-align: left;
 		font-weight: 600;
-		font-size: 14px;
+		font-size: clamp(10px, 1.6cqi, 14px);
 		color: var(--muted);
 	}
 
@@ -401,13 +403,13 @@
 		position: relative;
 		padding: 0;
 		border: 1.5px solid transparent;
-		border-radius: 7px;
+		border-radius: clamp(3px, 0.7cqi, 7px);
 		display: grid;
 		place-items: center;
 		cursor: pointer;
 		font-family: 'Inter', system-ui, sans-serif;
 		font-weight: 600;
-		font-size: clamp(12px, 1.15vw, 16px);
+		font-size: clamp(8px, calc(100cqi / (var(--cols) + 1) * 0.42), 16px);
 		transition:
 			background 0.15s,
 			border-color 0.15s;
@@ -425,8 +427,8 @@
 	}
 	.z-sim .lbl,
 	.z-console .lbl {
-		font-size: 0.66em;
-		letter-spacing: -0.01em;
+		font-size: 0.82em;
+		letter-spacing: -0.02em;
 	}
 	.lbl {
 		line-height: 1;
@@ -470,10 +472,6 @@
 	@media (max-width: 640px) {
 		.wrap {
 			--gap-y: 8px;
-		}
-		/* phones: keep seats tappable, the map scrolls sideways inside its card */
-		.mode-public {
-			min-width: calc(var(--cols) * 26px + 60px);
 		}
 	}
 </style>

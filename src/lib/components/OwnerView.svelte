@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import SeatMap from '#lib/components/SeatMap.svelte';
-	import WebsiteWidget from '#lib/components/WebsiteWidget.svelte';
 	import { counts } from '#lib/format.ts';
 	import { FLOORS, FLOOR_META, type CafeState, type PC, type Status } from '#lib/types.ts';
 
@@ -9,8 +8,12 @@
 		initial: CafeState;
 		/** Called after every successful save, e.g. to refresh the live preview. */
 		onsaved?: () => void;
+		/** Live counts for the side menu */
+		oncounts?: (free: number, total: number) => void;
+		/** False while another menu section is showing (keyboard shortcuts pause) */
+		active?: boolean;
 	}
-	let { initial, onsaved }: Props = $props();
+	let { initial, onsaved, oncounts, active = true }: Props = $props();
 
 	// svelte-ignore state_referenced_locally
 	let pcs = $state<PC[]>(initial.pcs);
@@ -31,6 +34,8 @@
 	const hoverPc = $derived(hovered ? byId.get(hovered) : null);
 	const gridCols = $derived(Math.max(...pcs.map((p) => p.x + 1)));
 	const taken = (s: Status) => s !== 'free';
+
+	$effect(() => oncounts?.(c.zones.pc.free, c.zones.pc.total));
 
 	async function send(body: unknown) {
 		saving++;
@@ -160,6 +165,7 @@
 	onMount(() => {
 		const poll = setInterval(() => document.visibilityState === 'visible' && refresh(), 8000);
 		const key = (e: KeyboardEvent) => {
+			if (!active) return;
 			const inInput = (e.target as HTMLElement).closest('input');
 			if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !inInput) {
 				e.preventDefault();
@@ -177,22 +183,14 @@
 </script>
 
 <div class="owner">
-	<header>
-		<div>
-			<h1>Someone sat down or left? Click their seat.</h1>
-			<p class="legend">
-				{#if hoverPc}
-					Click to mark <b>{hoverPc.label}</b> as
-					<b class={hoverPc.status === 'free' ? 'to-taken' : 'to-free'}>{hoverPc.status === 'free' ? 'taken' : 'free'}</b>
-				{:else}
-					<span class="key free"></span> Free <span class="key taken"></span> Taken
-				{/if}
-			</p>
-		</div>
-		<div class="count">
-			<b>{c.zones.pc.free}</b><span>of {c.zones.pc.total}<br />PCs free</span>
-		</div>
-	</header>
+	<p class="legend">
+		{#if hoverPc}
+			Click to mark <b>{hoverPc.label}</b> as
+			<b class={hoverPc.status === 'free' ? 'to-taken' : 'to-free'}>{hoverPc.status === 'free' ? 'taken' : 'free'}</b>
+		{:else}
+			<span class="key free"></span> Free <span class="key taken"></span> Taken
+		{/if}
+	</p>
 
 	<form class="type" class:bad={typedError} onsubmit={submitTyped}>
 		<input
@@ -226,11 +224,7 @@
 		</span>
 		<span class="grow"></span>
 		<button class="link" onclick={clearAll}>Mark all free</button>
-		<a class="link" href="/admin/layout">Edit floor plan</a>
-		<form method="POST" action="/admin/logout"><button class="link">Log out</button></form>
 	</footer>
-
-	<WebsiteWidget />
 </div>
 
 {#if toast}
@@ -245,22 +239,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.1rem;
-		padding: 1.2rem clamp(12px, 2vw, 24px) 1.2rem;
-	}
-	header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-	h1 {
-		margin: 0;
-		font-family: 'Inter', system-ui, sans-serif;
-		text-transform: none;
-		letter-spacing: -0.01em;
-		font-weight: 700;
-		font-size: clamp(1.35rem, 2vw, 1.7rem);
-		line-height: 1.2;
+		padding: 0.5rem 0 1rem;
 	}
 	.legend {
 		margin: 0.45rem 0 0;
@@ -292,27 +271,6 @@
 	}
 	.to-free {
 		color: var(--free-ink);
-	}
-	.count {
-		display: flex;
-		align-items: center;
-		gap: 0.45rem;
-		font-family: var(--display);
-		text-transform: uppercase;
-		flex-shrink: 0;
-	}
-	.count b {
-		font-size: 3.4rem;
-		line-height: 0.85;
-		color: var(--text);
-	}
-	.count span {
-		font-family: 'Inter', system-ui, sans-serif;
-		text-transform: none;
-		font-weight: 500;
-		font-size: 0.95rem;
-		color: var(--muted);
-		line-height: 1.25;
 	}
 
 	.type {
@@ -361,9 +319,6 @@
 		gap: 0.4rem 1.2rem;
 		font-size: 0.9rem;
 	}
-	footer form {
-		margin: 0;
-	}
 	.grow {
 		flex: 1;
 	}
@@ -390,7 +345,7 @@
 
 	.toast {
 		position: fixed;
-		left: 25%;
+		left: 50%;
 		bottom: 1.25rem;
 		transform: translateX(-50%);
 		z-index: 70;
@@ -418,9 +373,5 @@
 		cursor: pointer;
 		clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
 	}
-	@media (max-width: 1000px) {
-		.toast {
-			left: 50%;
-		}
-	}
+
 </style>
