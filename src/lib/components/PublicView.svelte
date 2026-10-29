@@ -140,8 +140,12 @@
 	}
 	h1 {
 		margin: 0;
-		font-size: clamp(2rem, 4.5vw, 3rem);
-		line-height: 1.1;
+		font-family: 'Inter', system-ui, sans-serif;
+		text-transform: none;
+		letter-spacing: -0.01em;
+		font-weight: 700;
+		font-size: clamp(1.8rem, 4vw, 2.6rem);
+		line-height: 1.15;
 	}
 	.summary p {
 		margin: 0.6rem 0 0;

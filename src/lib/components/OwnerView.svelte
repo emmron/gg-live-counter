@@ -250,8 +250,12 @@
 	}
 	h1 {
 		margin: 0;
-		font-size: clamp(1.5rem, 2.2vw, 1.9rem);
-		line-height: 1.1;
+		font-family: 'Inter', system-ui, sans-serif;
+		text-transform: none;
+		letter-spacing: -0.01em;
+		font-weight: 700;
+		font-size: clamp(1.35rem, 2vw, 1.7rem);
+		line-height: 1.2;
 	}
 	.legend {
 		margin: 0.45rem 0 0;

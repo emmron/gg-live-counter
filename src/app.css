@@ -22,12 +22,12 @@
 
 	/* seat states: free = soft cyan tint with a cyan edge, taken = quiet dark grey */
 	--free: rgba(76, 201, 212, 0.32);
-	--free-edge: rgba(76, 201, 212, 0.65);
-	--free-ink: #8fdde4;
+	--free-edge: rgba(232, 235, 242, 0.55);
+	--free-ink: #e8ebf2;
 	--free-glow: transparent;
-	--in-use: #1b202b;
-	--in-use-edge: #2d3443;
-	--in-use-ink: #8a93a7;
+	--in-use: #161a23;
+	--in-use-edge: #232937;
+	--in-use-ink: #5d6679;
 	--reserved: #646cfd;
 	--reserved-ink: #fff;
 	--offline: #121722;
