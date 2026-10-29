@@ -181,12 +181,12 @@
 			</p>
 		</div>
 		<div class="count">
-			<b>{c.zones.pc.free}</b><span>/ {c.zones.pc.total}<br />PCs free</span>
+			<b>{c.zones.pc.free}</b><span>of {c.zones.pc.total}<br />PCs free</span>
 		</div>
 	</header>
 
 	<form class="type" class:bad={typedError} onsubmit={submitTyped}>
-		<label for="seat">Or type a seat number</label>
+		<label for="seat">Or type a seat number:</label>
 		<input
 			id="seat"
 			bind:this={inputEl}
@@ -232,9 +232,10 @@
 
 <style>
 	.owner {
+		max-width: 920px;
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 1.1rem;
 		padding: 1.2rem clamp(12px, 2vw, 24px) 1.2rem;
 	}
 	header {
@@ -245,8 +246,8 @@
 	}
 	h1 {
 		margin: 0;
-		font-size: clamp(1.4rem, 2.4vw, 2rem);
-		line-height: 1.05;
+		font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+		line-height: 1.1;
 	}
 	.legend {
 		margin: 0.45rem 0 0;
@@ -283,16 +284,17 @@
 		flex-shrink: 0;
 	}
 	.count b {
-		font-size: 3.6rem;
+		font-size: 3.4rem;
 		line-height: 0.85;
-		color: var(--cyan);
+		color: var(--text);
 	}
 	.count span {
-		font-weight: 700;
+		font-family: 'Inter', system-ui, sans-serif;
+		text-transform: none;
+		font-weight: 500;
 		font-size: 0.95rem;
-		letter-spacing: 0.06em;
 		color: var(--muted);
-		line-height: 1.1;
+		line-height: 1.25;
 	}
 
 	.type {
@@ -301,10 +303,6 @@
 		gap: 0.6rem;
 	}
 	.type label {
-		font-family: var(--display);
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
 		color: var(--muted);
 		white-space: nowrap;
 	}
@@ -339,9 +337,11 @@
 
 	h2 {
 		margin: 0 0 0.5rem;
-		font-size: 0.95rem;
-		letter-spacing: 0.14em;
-		color: var(--muted);
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 1rem;
+		font-weight: 600;
+		text-transform: none;
+		color: var(--text);
 	}
 
 	footer {
@@ -349,7 +349,7 @@
 		align-items: center;
 		flex-wrap: wrap;
 		gap: 0.4rem 1.2rem;
-		font-size: 0.85rem;
+		font-size: 0.9rem;
 	}
 	footer form {
 		margin: 0;
@@ -358,7 +358,7 @@
 		flex: 1;
 	}
 	.sync {
-		color: var(--cyan);
+		color: var(--muted);
 	}
 	.sync.bad {
 		color: #ff4d6d;

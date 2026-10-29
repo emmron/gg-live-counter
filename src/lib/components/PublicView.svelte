@@ -67,10 +67,9 @@
 		<div class="hero-text">
 			<p class="eyebrow"><span class="live"></span> Live right now</p>
 			<h1>
-				<span class="num" class:none={pcsFree.free === 0}>{pcsFree.free}</span>
-				<span class="of">/ {pcsFree.total}</span><br />
-				PCs free.
+				<span class="num" class:none={pcsFree.free === 0}>{pcsFree.free}</span> PCs free
 			</h1>
+			<p class="of-line">out of {pcsFree.total}</p>
 			<p class="sub">
 				{#if pcsFree.free === 0}
 					Every PC is taken right now. Check back soon.
@@ -177,11 +176,8 @@
 		gap: 1rem;
 	}
 	.open {
-		font-family: var(--display);
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		font-size: 0.9rem;
+		font-weight: 500;
+		font-size: 0.95rem;
 		display: flex;
 		align-items: center;
 		gap: 0.45rem;
@@ -209,8 +205,8 @@
 		font-family: var(--display);
 		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: 0.16em;
-		color: var(--cyan);
+		letter-spacing: 0.08em;
+		color: var(--muted);
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -229,22 +225,23 @@
 	}
 	h1 {
 		margin: 0;
-		font-size: clamp(2.8rem, 7vw, 5.4rem);
-		line-height: 0.92;
+		font-size: clamp(2.6rem, 6vw, 4.4rem);
+		line-height: 1;
 	}
 	.num {
-		color: var(--cyan);
+		color: var(--text);
 	}
 	.num.none {
 		color: #fff;
 		text-shadow: none;
 	}
-	.of {
-		color: var(--faded);
-		font-size: 0.55em;
+	.of-line {
+		margin: 0.35rem 0 0;
+		color: var(--muted);
+		font-size: 1.05rem;
 	}
 	.sub {
-		margin: 1rem 0 1.4rem;
+		margin: 0.6rem 0 1.4rem;
 		font-size: 1rem;
 		max-width: 34rem;
 	}
@@ -278,7 +275,7 @@
 		flex-shrink: 0;
 	}
 	.spartan {
-		height: clamp(220px, 30vw, 380px);
+		height: clamp(200px, 24vw, 320px);
 		opacity: 0.9;
 		margin-right: 2%;
 	}
@@ -287,13 +284,13 @@
 		--cut: 14px;
 		margin: 0.5rem 0 1.25rem;
 		background: #10151f;
-		border-left: 4px solid var(--cyan);
+		border-left: 3px solid var(--line-2);
 		color: #fff;
 		font-family: var(--display);
 		font-weight: 600;
-		font-size: 1.2rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		font-size: 1.15rem;
+		text-transform: none;
+		letter-spacing: 0;
 		padding: 0.8rem 1.2rem;
 	}
 
@@ -320,14 +317,11 @@
 	.legend {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem 1.2rem;
+		gap: 0.5rem 1.4rem;
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		font-family: var(--display);
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
+		font-weight: 500;
 	}
 	.legend li {
 		display: flex;

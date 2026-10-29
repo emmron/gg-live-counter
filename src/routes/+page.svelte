@@ -22,7 +22,7 @@
 			<OwnerView initial={data.state} onsaved={refreshPreview} />
 		</div>
 		<div class="right">
-			<div class="bar"><span class="dot"></span> What customers see right now</div>
+			<div class="bar"><span class="dot"></span> What customers see (live)</div>
 			<iframe bind:this={preview} src="/?preview" title="Customer view"></iframe>
 		</div>
 	</div>
@@ -40,24 +40,21 @@
 	.left {
 		overflow-y: auto;
 		border-right: 1px solid var(--line-2);
-		background: #000;
+		background: var(--bg);
 	}
 	.right {
 		display: flex;
 		flex-direction: column;
 		min-width: 0;
-		background: #000;
+		background: var(--bg);
 	}
 	.bar {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.55rem 1rem;
-		font-family: var(--display);
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		font-size: 0.8rem;
+		font-size: 0.85rem;
+		font-weight: 500;
 		color: var(--muted);
 		border-bottom: 1px solid var(--line);
 	}

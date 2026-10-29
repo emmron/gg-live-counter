@@ -216,9 +216,9 @@
 	}
 
 	const colTemplate = $derived(
-		layout ? `repeat(${cols},minmax(0,1fr))` : `22px repeat(${cols},minmax(0,1fr)) 22px`
+		layout ? `repeat(${cols},minmax(0,1fr))` : `24px repeat(${cols},minmax(0,1fr))`
 	);
-	const gridCols = $derived(cols + off * 2);
+	const gridCols = $derived(cols + off);
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -256,7 +256,6 @@
 
 			{#each rowLetters as r (r.y)}
 				<span class="rowl" style="grid-column:1;grid-row:{r.y + 1}">{r.letter}</span>
-				<span class="rowl" style="grid-column:{gridCols};grid-row:{r.y + 1}">{r.letter}</span>
 			{/each}
 
 			{#each emptyCells as c (`${c.x},${c.y}`)}
@@ -368,11 +367,10 @@
 	}
 	.wall span {
 		font-family: var(--display);
-		font-weight: 600;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		font-size: 0.72rem;
-		color: #6f7fae;
+		font-family: 'Inter', system-ui, sans-serif;
+		font-weight: 500;
+		font-size: 0.78rem;
+		color: var(--muted);
 		white-space: nowrap;
 	}
 	.wall.bottom span {
@@ -397,7 +395,7 @@
 		text-align: center;
 		font-family: var(--display);
 		font-weight: 700;
-		font-size: 13px;
+		font-size: 15px;
 		color: var(--muted);
 	}
 
@@ -425,18 +423,17 @@
 		right: 8px;
 		font-family: var(--display);
 		font-weight: 700;
-		font-size: 0.8rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
+		font-family: 'Inter', system-ui, sans-serif;
+		font-weight: 600;
+		font-size: 0.85rem;
 		color: var(--muted);
 	}
 	.walk-label,
 	.void-label {
 		font-family: var(--display);
-		font-size: 0.65rem;
-		letter-spacing: 0.3em;
-		text-transform: uppercase;
-		color: rgba(138, 149, 179, 0.45);
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.8rem;
+		color: var(--faded);
 	}
 
 
@@ -464,7 +461,7 @@
 		cursor: pointer;
 		font-family: var(--display);
 		font-weight: 600;
-		font-size: clamp(12px, 1.2vw, 17px);
+		font-size: clamp(13px, 1.25vw, 17px);
 		background: var(--seat-bg);
 		transition:
 			transform 0.12s,

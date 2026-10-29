@@ -4,16 +4,16 @@
  * Barlow Semi Condensed uppercase headings, chamfered (cut-corner) buttons and cards.
  */
 :root {
-	--bg: #000;
-	--bg-2: #07090e;
+	--bg: #0a0d13;
+	--bg-2: #0e121a;
 	--panel: #0c0f16;
 	--panel-2: #121722;
 	--line: rgba(255, 255, 255, 0.1);
 	--line-2: rgba(255, 255, 255, 0.18);
-	--text: #fff;
-	--muted: #8d97b0;
-	--faded: #727f9f;
-	--cyan: #1aeeff;
+	--text: #e8ebf2;
+	--muted: #a3abbd;
+	--faded: #8790a5;
+	--cyan: #4cc9d4; /* softened from their #1AEEFF so it isn't highlighter-bright */
 	--cyan-2: #19c3d1;
 	--indigo: #646cfd;
 	--accent: var(--cyan);
@@ -21,13 +21,13 @@
 	--display: 'Barlow Semi Condensed', 'Inter', system-ui, sans-serif;
 
 	/* seat states: free = soft cyan tint with a cyan edge, taken = quiet dark grey */
-	--free: rgba(26, 238, 255, 0.3);
-	--free-edge: rgba(26, 238, 255, 0.8);
+	--free: rgba(76, 201, 212, 0.32);
+	--free-edge: rgba(76, 201, 212, 0.7);
 	--free-ink: #ffffff;
 	--free-glow: transparent;
-	--in-use: #181c26;
-	--in-use-edge: #262c39;
-	--in-use-ink: #4f586b;
+	--in-use: #1b202b;
+	--in-use-edge: #2d3443;
+	--in-use-ink: #8a93a7;
 	--reserved: #646cfd;
 	--reserved-ink: #fff;
 	--offline: #121722;
@@ -54,7 +54,8 @@ body {
 	background: var(--bg);
 	color: var(--text);
 	font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-	font-size: 15px;
+	font-size: 16px;
+	line-height: 1.5;
 	-webkit-font-smoothing: antialiased;
 }
 
@@ -123,8 +124,8 @@ select {
 	background: #1c2333;
 }
 .btn.primary {
-	background: var(--cyan);
-	color: #000;
+	background: #e8ebf2;
+	color: #0a0d13;
 }
 .btn.primary:hover {
 	background: #fff;
@@ -134,7 +135,7 @@ select {
 	color: #000;
 }
 .btn.white:hover {
-	background: var(--cyan);
+	background: #e8ebf2;
 }
 .btn:disabled {
 	opacity: 0.35;
