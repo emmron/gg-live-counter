@@ -48,8 +48,8 @@ export const ZONE_META: Record<Zone, { name: string; unit: string; prefix: strin
 
 /** Map labels: top/bottom are the long walls, side is the right-hand end of the hall. */
 export const FLOOR_META: Record<Floor, { name: string; top: string; bottom: string; side: string }> = {
-	ground: { name: 'Ground floor', top: 'WALL · SCREENS FACE THIS WAY', bottom: '', side: 'ENTRANCE' },
-	upstairs: { name: 'Upstairs mezzanine', top: 'WALL · SCREENS FACE THIS WAY', bottom: 'BACK MEZZANINE WALL', side: '' }
+	ground: { name: 'Ground floor', top: 'Wall', bottom: '', side: 'Entrance' },
+	upstairs: { name: 'Upstairs', top: 'Wall', bottom: 'Wall', side: '' }
 };
 
 /** Largest grid coordinate allowed (0..MAX_GRID) */

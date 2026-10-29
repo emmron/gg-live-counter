@@ -20,18 +20,20 @@
 	--accent-2: var(--cyan-2);
 	--display: 'Barlow Semi Condensed', 'Inter', system-ui, sans-serif;
 
-	/* seat states: available glows cyan, taken goes dim (cinema convention) */
-	--free: #1aeeff;
-	--free-ink: #002a30;
-	--free-glow: rgba(26, 238, 255, 0.45);
-	--in-use: #262c3a;
-	--in-use-ink: #7b859e;
+	/* seat states: free = soft cyan tint with a cyan edge, taken = quiet dark grey */
+	--free: rgba(26, 238, 255, 0.3);
+	--free-edge: rgba(26, 238, 255, 0.8);
+	--free-ink: #ffffff;
+	--free-glow: transparent;
+	--in-use: #181c26;
+	--in-use-edge: #262c39;
+	--in-use-ink: #4f586b;
 	--reserved: #646cfd;
 	--reserved-ink: #fff;
 	--offline: #121722;
 
-	--sim: #ff4d6d;
-	--console: #b18cff;
+	--sim: #e0687e;
+	--console: #9b86e6;
 
 	--cut: 14px;
 	--radius: 10px;

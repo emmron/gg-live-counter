@@ -210,8 +210,8 @@
 	/** Seat text: number only in lettered rows; sims show their number; consoles their type. */
 	function shortLabel(pc: PC) {
 		if (letterRows.has(pc.y)) return pc.label.replace(/^[A-Z]+/i, '');
-		if (pc.zone === 'sim') return pc.label.replace(/^SIM-?/i, '') || pc.label;
-		if (pc.zone === 'console') return pc.label.replace(/-?d+$/, '') || pc.label;
+		if (pc.zone === 'sim') return 'SIM ' + (pc.label.replace(/^SIM-?/i, '') || '');
+		if (pc.zone === 'console') return (pc.label.replace(/-?\d+$/, '') || pc.label).replace(/^XBX$/i, 'XBOX');
 		return pc.label;
 	}
 
@@ -249,6 +249,7 @@
 						<span class="void-label">Open to ground floor</span>
 					{:else}
 						<span class="walk-label">Walkway</span>
+						{#if meta.side && b.y + b.span === rows - 1}<span class="entrance-label">{meta.side} →</span>{/if}
 					{/if}
 				</div>
 			{/each}
@@ -276,7 +277,6 @@
 					class:cursor={cursor === pc.id && mode !== 'public'}
 					class:dragging={dragId === pc.id}
 					class:drop={dropCell && dragId !== pc.id && dropCell.x === pc.x && dropCell.y === pc.y}
-					class:long={!letterRows.has(pc.y) && pc.label.length > 3}
 					style="grid-column:{pc.x + 1 + off};grid-row:{pc.y + 1}"
 					data-id={pc.id}
 					data-x={pc.x}
@@ -301,48 +301,23 @@
 						oncontext?.(pc.id, e);
 					}}
 				>
-					{#if pc.zone === 'pc'}
-						<!-- desk, screen and tower on the shelf, drawn on the screen side -->
-						<span class="desk" aria-hidden="true"><i class="mon"></i><i class="tower"></i></span>
-					{:else if pc.zone === 'sim'}
-						<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
-							<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.4" />
-							<path d="M3.8 11h16.4M12 12.5v7.8" stroke="currentColor" stroke-width="2.4" fill="none" />
-							<circle cx="12" cy="12" r="2.2" fill="currentColor" />
-						</svg>
-					{:else}
-						<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
-							<path
-								d="M7 7h10a5 5 0 0 1 4.9 6l-.8 3.6a2.4 2.4 0 0 1-4.1 1.1L14.6 15H9.4L7 17.7a2.4 2.4 0 0 1-4.1-1.1L2.1 13A5 5 0 0 1 7 7z"
-								fill="currentColor"
-							/>
-							<path d="M6 11h3M7.5 9.5v3" stroke="var(--seat-bg)" stroke-width="1.6" />
-							<circle cx="16" cy="10.4" r="1" fill="var(--seat-bg)" /><circle cx="17.8" cy="12.2" r="1" fill="var(--seat-bg)" />
-						</svg>
-					{/if}
 					<span class="lbl">{shortLabel(pc)}</span>
 				</button>
 			{/each}
 		</div>
 
-		{#if floor === 'ground' && !layout}
-			<div class="gg-floor" aria-hidden="true">GG</div>
-		{/if}
 		{#if meta.bottom}<div class="wall bottom"><span>{meta.bottom}</span></div>{/if}
 	</div>
 
-	{#if meta.side}<div class="entrance" aria-label="Entrance"><span>{meta.side}</span></div>{/if}
-	{#if !layout && floor === 'ground'}<div class="stairs" aria-hidden="true"><i></i><i></i><i></i><i></i><span>Stairs</span></div>{/if}
 
 	{#if box}<div class="box" style={boxStyle}></div>{/if}
 </div>
 
 <style>
 	.wrap {
-		--gap-x: clamp(3px, 0.55vw, 7px);
-		--gap-y: 30px;
+		--gap-x: clamp(3px, 0.45vw, 6px);
+		--gap-y: 10px;
 		position: relative;
-		padding-right: 26px;
 		touch-action: manipulation;
 		user-select: none;
 		-webkit-user-select: none;
@@ -360,9 +335,9 @@
 	}
 	.mode-layout {
 		padding-right: 0;
+		/* (kept for layout mode) */
 	}
 
-	/* ---- the room ---- */
 	.hall {
 		position: relative;
 		border: 1px solid var(--line);
@@ -375,14 +350,14 @@
 	}
 	.wall {
 		position: relative;
-		height: 26px;
+		height: 22px;
 		display: grid;
 		place-items: center;
 		margin: 0 -10px;
 	}
 	.wall.top {
-		border-bottom: 2px solid #2f6bff;
-		box-shadow: 0 8px 24px -10px #2f6bff;
+		border-bottom: 2px solid rgba(80, 120, 255, 0.55);
+		box-shadow: none;
 		background: linear-gradient(180deg, #161c2b, #0f1420);
 	}
 	.wall.bottom {
@@ -393,10 +368,11 @@
 	}
 	.wall span {
 		font-family: var(--display);
-		font-weight: 700;
-		letter-spacing: 0.32em;
-		font-size: 0.66rem;
-		color: #7f9cff;
+		font-weight: 600;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		font-size: 0.72rem;
+		color: #6f7fae;
 		white-space: nowrap;
 	}
 	.wall.bottom span {
@@ -407,12 +383,10 @@
 		display: grid;
 		column-gap: var(--gap-x);
 		row-gap: var(--gap-y);
-		padding-top: 30px;
+		padding: 14px 0 10px;
 		margin: 0 auto;
 	}
-	.grid.bottom-desk {
-		padding-bottom: 30px;
-	}
+
 	.mode-layout .grid {
 		row-gap: 10px;
 		padding-top: 10px;
@@ -427,13 +401,12 @@
 		color: var(--muted);
 	}
 
-	/* empty rows: walkway / void */
 	.band {
-		min-height: 34px;
-		margin: -14px 0;
+		min-height: 30px;
 		border-radius: 6px;
-		display: grid;
-		place-items: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		position: relative;
 		z-index: 0;
 	}
@@ -447,6 +420,16 @@
 		border-bottom: 3px solid transparent;
 		border-image: repeating-linear-gradient(90deg, #6b7486 0 3px, #333a48 3px 14px) 3;
 	}
+	.entrance-label {
+		position: absolute;
+		right: 8px;
+		font-family: var(--display);
+		font-weight: 700;
+		font-size: 0.8rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
 	.walk-label,
 	.void-label {
 		font-family: var(--display);
@@ -456,66 +439,7 @@
 		color: rgba(138, 149, 179, 0.45);
 	}
 
-	/* projected GG logo on the floor by the entrance */
-	.gg-floor {
-		position: absolute;
-		right: 6%;
-		bottom: 34px;
-		font-family: var(--display);
-		font-weight: 700;
-		font-size: 2.4rem;
-		color: rgba(255, 255, 255, 0.06);
-		text-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
-		pointer-events: none;
-	}
 
-	.entrance {
-		position: absolute;
-		right: 0;
-		bottom: 30px;
-		height: 90px;
-		width: 22px;
-		display: grid;
-		place-items: center;
-		border-left: 3px solid var(--reserved);
-		border-radius: 2px;
-	}
-	.entrance span {
-		writing-mode: vertical-rl;
-		font-family: var(--display);
-		font-weight: 700;
-		letter-spacing: 0.28em;
-		font-size: 0.62rem;
-		color: var(--reserved);
-	}
-	.stairs {
-		position: absolute;
-		left: 34px;
-		bottom: 6px;
-		display: flex;
-		align-items: center;
-		gap: 2px;
-		opacity: 0.55;
-		pointer-events: none;
-	}
-	.stairs i {
-		width: 4px;
-		height: 12px;
-		background: var(--muted);
-		border-radius: 1px;
-	}
-	.stairs span {
-		margin-left: 5px;
-		font-family: var(--display);
-		font-size: 0.6rem;
-		letter-spacing: 0.25em;
-		text-transform: uppercase;
-		color: var(--muted);
-	}
-	.mode-layout .stairs,
-	.mode-layout .entrance {
-		display: none;
-	}
 
 	.cell {
 		aspect-ratio: 1;
@@ -527,21 +451,20 @@
 		background: color-mix(in srgb, var(--accent-2) 15%, transparent);
 	}
 
-	/* ---- seats (chairs seen from above) ---- */
 	.seat {
 		--seat-bg: var(--free);
 		aspect-ratio: 1;
 		position: relative;
 		z-index: 1;
 		padding: 0;
-		border: 2px solid transparent;
+		border: 1.5px solid transparent;
 		display: grid;
 		place-items: center;
 		align-content: center;
 		cursor: pointer;
 		font-family: var(--display);
-		font-weight: 700;
-		font-size: clamp(11px, 1.05vw, 15px);
+		font-weight: 600;
+		font-size: clamp(12px, 1.2vw, 17px);
 		background: var(--seat-bg);
 		transition:
 			transform 0.12s,
@@ -555,62 +478,6 @@
 		border-radius: 16% 16% 42% 42%;
 	}
 
-	/* Desk strip in front of the chair: adjacent desks merge into one long bench */
-	.desk {
-		position: absolute;
-		left: calc(-1 * var(--gap-x) / 2 - 2px);
-		right: calc(-1 * var(--gap-x) / 2 - 2px);
-		height: 9px;
-		background: linear-gradient(180deg, #3a2c22, #2a2019);
-		pointer-events: none;
-	}
-	.f-up .desk {
-		top: -15px;
-	}
-	.f-down .desk {
-		bottom: -15px;
-	}
-	.mon {
-		position: absolute;
-		left: 20%;
-		right: 20%;
-		height: 3px;
-		border-radius: 1px;
-		background: #4a5368;
-	}
-	.f-up .mon {
-		top: 1px;
-	}
-	.f-down .mon {
-		bottom: 1px;
-	}
-	/* screen lights up while someone's playing */
-	.s-in_use .mon {
-		background: #cfe9ff;
-		box-shadow: 0 0 6px #8fd3ff;
-	}
-	.tower {
-		position: absolute;
-		left: 50%;
-		width: 9px;
-		height: 11px;
-		margin-left: -4.5px;
-		border-radius: 2px;
-		background:
-			radial-gradient(circle at 50% 35%, #ff6ad5 0 1.6px, transparent 2.2px),
-			radial-gradient(circle at 50% 72%, #6ae3ff 0 1.6px, transparent 2.2px),
-			#e9edf5;
-		box-shadow: 0 0 6px rgba(186, 120, 255, 0.55);
-	}
-	.f-up .tower {
-		top: -12px;
-	}
-	.f-down .tower {
-		bottom: -12px;
-	}
-	.mode-layout .tower {
-		display: none;
-	}
 
 	.z-sim {
 		border-radius: 30%;
@@ -620,28 +487,23 @@
 		border-radius: 30%;
 		border-color: var(--console);
 	}
-	.ico {
-		width: 56%;
-		height: 56%;
-		margin-bottom: -1px;
+	.z-sim.s-in_use,
+	.z-console.s-in_use {
+		border-color: color-mix(in srgb, currentColor 40%, transparent);
 	}
 	.z-sim .lbl,
 	.z-console .lbl {
-		font-size: 0.68em;
+		font-size: 0.7em;
 		font-weight: 700;
-		letter-spacing: 0.03em;
+		letter-spacing: 0.02em;
 	}
 	.z-sim,
 	.z-console {
-		border-width: 2.5px;
-	}
-	.long {
-		font-size: clamp(7px, 0.75vw, 11px);
+		border-width: 2px;
 	}
 
 	.seat:hover {
-		transform: translateY(-1px);
-		filter: brightness(1.12);
+		filter: brightness(1.25);
 	}
 	.seat:focus-visible {
 		outline: 2px solid white;
@@ -650,11 +512,12 @@
 
 	.s-free {
 		--seat-bg: var(--free);
+		border-color: var(--free-edge);
 		color: var(--free-ink);
-		box-shadow: 0 0 12px var(--free-glow);
 	}
 	.s-in_use {
 		--seat-bg: var(--in-use);
+		border-color: var(--in-use-edge);
 		color: var(--in-use-ink);
 	}
 	.s-reserved {
@@ -700,7 +563,7 @@
 		height: 8px;
 		border-radius: 50%;
 		background: white;
-		box-shadow: 0 0 6px white;
+		box-shadow: none;
 	}
 	.dragging {
 		opacity: 0.45;
@@ -724,7 +587,7 @@
 
 	@media (max-width: 640px) {
 		.wrap {
-			--gap-y: 26px;
+			--gap-y: 8px;
 		}
 		/* phones: keep seats tappable, the map scrolls sideways inside its card */
 		.mode-public {

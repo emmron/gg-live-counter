@@ -43,8 +43,8 @@ export function defaultState(): CafeState {
 	row('D', 'upstairs', 3, 0, 9, 'down');
 	row('E', 'upstairs', 4, 0, 9, 'down');
 
-	[0, 1, 2].forEach((i) => add(`SIM${i + 1}`, 'sim', 'ground', 4 + i, 3, 'up'));
-	['PS5-1', 'PS5-2', 'XBX-1', 'XBX-2'].forEach((label, i) => add(label, 'console', 'ground', 10 + i, 3, 'up'));
+	[0, 1, 2].forEach((i) => add(`SIM${i + 1}`, 'sim', 'ground', i, 3, 'up'));
+	['PS5-1', 'PS5-2', 'XBX-1', 'XBX-2'].forEach((label, i) => add(label, 'console', 'ground', 4 + i, 3, 'up'));
 
 	return { pcs, announcement: '', updatedAt: now };
 }

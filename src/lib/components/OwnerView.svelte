@@ -174,14 +174,14 @@
 <div class="owner">
 	<header>
 		<div>
-			<h1>Click a seat when someone sits down or leaves</h1>
+			<h1>Click a seat to switch it</h1>
 			<p class="legend">
 				<span class="key free"></span> Free <span class="key taken"></span> Taken
-				<span class="dim">· click again to switch back</span>
+				<span class="dim">· someone sits down or leaves → click their seat</span>
 			</p>
 		</div>
 		<div class="count">
-			<b>{c.free}</b><span>free of<br />{c.total}</span>
+			<b>{c.zones.pc.free}</b><span>/ {c.zones.pc.total}<br />PCs free</span>
 		</div>
 	</header>
 
@@ -265,11 +265,11 @@
 	}
 	.key.free {
 		background: var(--free);
-		box-shadow: 0 0 10px var(--free-glow);
+		border: 1.5px solid var(--free-edge);
 	}
 	.key.taken {
 		background: var(--in-use);
-		border: 1px solid #3a4258;
+		border: 1.5px solid var(--in-use-edge);
 	}
 	.dim {
 		color: var(--muted);
@@ -286,7 +286,6 @@
 		font-size: 3.6rem;
 		line-height: 0.85;
 		color: var(--cyan);
-		text-shadow: 0 0 24px var(--free-glow);
 	}
 	.count span {
 		font-weight: 700;

@@ -40,7 +40,7 @@
 	.left {
 		overflow-y: auto;
 		border-right: 1px solid var(--line-2);
-		background: radial-gradient(900px 400px at 0 0, rgba(26, 238, 255, 0.07), transparent 60%), #000;
+		background: #000;
 	}
 	.right {
 		display: flex;
@@ -66,7 +66,6 @@
 		height: 8px;
 		border-radius: 50%;
 		background: var(--cyan);
-		box-shadow: 0 0 8px var(--cyan);
 	}
 	iframe {
 		flex: 1;

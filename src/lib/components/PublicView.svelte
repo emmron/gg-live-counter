@@ -75,7 +75,7 @@
 				{#if pcsFree.free === 0}
 					Every PC is taken right now. Check back soon.
 				{:else}
-					Walk in and play. Perth’s largest gaming lounge, 3/24 Mercer Ln, Joondalup.
+					Walk in and play. 3/24 Mercer Ln, Joondalup.
 				{/if}
 			</p>
 			<div class="tiles">
@@ -84,7 +84,7 @@
 					{#if f.total}
 						<div class="tile">
 							<span class="ic cut">{fl === 'ground' ? 'G' : '↑'}</span>
-							<span><b>{f.free}</b> free · {FLOOR_META[fl].name}</span>
+							<span><b>{f.free}</b> free {FLOOR_META[fl].name.toLowerCase()}</span>
 						</div>
 					{/if}
 				{/each}
@@ -154,7 +154,7 @@
 		inset: 0 -20vw auto;
 		height: 640px;
 		background: url('/brand/mesh.png') center top / cover no-repeat;
-		opacity: 0.55;
+		opacity: 0.35;
 		z-index: -1;
 		pointer-events: none;
 		mask-image: linear-gradient(180deg, #000 40%, transparent);
@@ -191,7 +191,6 @@
 		height: 8px;
 		border-radius: 50%;
 		background: var(--cyan);
-		box-shadow: 0 0 8px var(--cyan);
 	}
 	.open.closed i {
 		background: #ff4d6d;
@@ -221,8 +220,7 @@
 		height: 9px;
 		border-radius: 50%;
 		background: var(--cyan);
-		box-shadow: 0 0 10px var(--cyan);
-		animation: pulse 1.8s infinite;
+		animation: pulse 2.4s infinite;
 	}
 	@keyframes pulse {
 		50% {
@@ -231,12 +229,11 @@
 	}
 	h1 {
 		margin: 0;
-		font-size: clamp(3rem, 8vw, 6.2rem);
+		font-size: clamp(2.8rem, 7vw, 5.4rem);
 		line-height: 0.92;
 	}
 	.num {
 		color: var(--cyan);
-		text-shadow: 0 0 40px rgba(26, 238, 255, 0.35);
 	}
 	.num.none {
 		color: #fff;
@@ -252,9 +249,9 @@
 		max-width: 34rem;
 	}
 	.tiles {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.7rem 1.4rem;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 15rem));
+		gap: 0.75rem 1.5rem;
 	}
 	.tile,
 	.detail {
@@ -282,22 +279,22 @@
 	}
 	.spartan {
 		height: clamp(220px, 30vw, 380px);
-		filter: drop-shadow(0 0 40px rgba(26, 238, 255, 0.25));
+		opacity: 0.9;
 		margin-right: 2%;
 	}
 
 	.announce {
 		--cut: 14px;
 		margin: 0.5rem 0 1.25rem;
-		background: var(--cyan);
-		color: #000;
+		background: #10151f;
+		border-left: 4px solid var(--cyan);
+		color: #fff;
 		font-family: var(--display);
-		font-weight: 700;
+		font-weight: 600;
 		font-size: 1.2rem;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		padding: 0.8rem 1.2rem;
-		text-align: center;
 	}
 
 	.floor {
@@ -305,7 +302,7 @@
 	}
 	.floor h2 {
 		margin: 0 0 0.6rem;
-		font-size: clamp(1.4rem, 2.5vw, 2rem);
+		font-size: clamp(1.3rem, 2.2vw, 1.7rem);
 	}
 	.scroll {
 		overflow-x: auto;
@@ -344,11 +341,11 @@
 	}
 	.legend .free {
 		background: var(--free);
-		box-shadow: 0 0 10px var(--free-glow);
+		border: 1.5px solid var(--free-edge);
 	}
 	.legend .taken {
 		background: var(--in-use);
-		border: 1px solid #3a4258;
+		border: 1.5px solid var(--in-use-edge);
 	}
 	.legend .ring {
 		border: 2.5px solid;
