@@ -1,21 +1,27 @@
+/* Palette taken from gggaminglounge.com.au: cyan #19c3d1, indigo #646cfd, slate #2b3242/#35415b */
 :root {
-	--bg: #07080d;
-	--bg-2: #0e1018;
-	--panel: #141722;
-	--line: #262a3a;
-	--text: #eef0f7;
-	--muted: #8a90a6;
-	--accent: #7c5cff;
-	--accent-2: #22d3ee;
+	--bg: #0b0e15;
+	--bg-2: #111520;
+	--panel: #1a1f2c;
+	--line: #2b3242;
+	--text: #f2f4f7;
+	--muted: #8a95b3;
+	--accent: #646cfd;
+	--accent-2: #19c3d1;
+	--display: 'Barlow Semi Condensed', 'Inter', system-ui, sans-serif;
 
-	--free: #22c55e;
-	--free-glow: rgba(34, 197, 94, 0.35);
-	--in-use: #ef4444;
-	--reserved: #f59e0b;
-	--offline: #3a3f52;
+	/* cinema convention: available seats glow, taken seats go dim */
+	--free: #19c3d1;
+	--free-ink: #04262a;
+	--free-glow: rgba(25, 195, 209, 0.4);
+	--in-use: #3a4458;
+	--in-use-ink: #8a95b3;
+	--reserved: #f5a524;
+	--offline: #2b3242;
+	--screen: rgba(226, 232, 255, 0.55);
 
-	--pro: #fbbf24;
-	--console: #c084fc;
+	--sim: #ff5a5f;
+	--console: #646cfd;
 
 	--radius: 14px;
 	color-scheme: dark;
@@ -33,7 +39,7 @@ body {
 
 body {
 	background:
-		radial-gradient(1200px 600px at 50% -200px, rgba(124, 92, 255, 0.18), transparent 70%),
+		radial-gradient(1200px 600px at 50% -200px, rgba(100, 108, 253, 0.16), transparent 70%),
 		var(--bg);
 	color: var(--text);
 	font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -43,7 +49,7 @@ body {
 h1,
 h2,
 .display {
-	font-family: 'Rajdhani', 'Inter', system-ui, sans-serif;
+	font-family: var(--display);
 	letter-spacing: 0.02em;
 }
 

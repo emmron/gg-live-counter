@@ -173,7 +173,7 @@
 
 	function selectZone() {
 		const cur = cursor ? byId.get(cursor) : null;
-		const zone = cur?.zone ?? 'standard';
+		const zone = cur?.zone ?? 'pc';
 		selected = pcs.filter((p) => p.zone === zone).map((p) => p.id);
 		flash(`Selected ${ZONE_META[zone].name}`);
 	}
@@ -239,7 +239,7 @@
 		dirty = true;
 	}
 
-	let newZone = $state<Zone>('standard');
+	let newZone = $state<Zone>('pc');
 
 	function nextLabel(zone: Zone) {
 		const prefix = ZONE_META[zone].prefix;
@@ -266,7 +266,7 @@
 		if (pcs.some((p) => p.label.toUpperCase() === label.toUpperCase())) return flash('Label already used', true);
 		snapshot();
 		const id = `pc-${crypto.randomUUID().slice(0, 8)}`;
-		pcs.push({ id, label, zone: newZone, ...spot, status: 'free', freeAt: null, updatedAt: new Date().toISOString() });
+		pcs.push({ id, label, zone: newZone, ...spot, facing: 'up', status: 'free', freeAt: null, updatedAt: new Date().toISOString() });
 		selected = [id];
 		cursor = id;
 		dirty = true;
@@ -293,6 +293,13 @@
 		const del = new Set(selected);
 		pcs = pcs.filter((p) => !del.has(p.id));
 		selected = [];
+		dirty = true;
+	}
+
+	function flip() {
+		if (!need(selected)) return;
+		snapshot();
+		for (const p of selPcs) p.facing = p.facing === 'up' ? 'down' : 'up';
 		dirty = true;
 	}
 
@@ -364,6 +371,7 @@
 			if (k === 'Enter') return e.preventDefault(), rename();
 			if (l === 'n') return addPc();
 			if (k === '1' || k === '2' || k === '3') return setZone(ZONES[Number(k) - 1]);
+			if (l === 't') return flip();
 		}
 	}
 
@@ -398,7 +406,7 @@
 	<header>
 		<div class="title">
 			<h1 class="display"><span class="logo">GG</span> Admin</h1>
-			<span class="count"><b>{c.free}</b>/{c.total} free</span>
+			<span class="count"><b>{c.zones.pc.free}</b>/{c.zones.pc.total} PCs free · {c.zones.sim.free}/{c.zones.sim.total} sims · {c.zones.console.free}/{c.zones.console.total} consoles</span>
 		</div>
 		<div class="actions">
 			<button class="btn" class:primary={mode === 'layout'} onclick={toggleMode} title="Toggle layout mode (L)">
@@ -429,6 +437,7 @@
 			</select>
 			<button class="btn" onclick={addPc}><kbd>N</kbd> Add PC</button>
 			<button class="btn" onclick={() => rename()} disabled={selected.length !== 1}><kbd>↵</kbd> Rename</button>
+			<button class="btn" onclick={flip} disabled={!selected.length} title="Flip which side the screen is on"><kbd>T</kbd> Flip</button>
 			<button class="btn" onclick={removeSelected} disabled={!selected.length}><kbd>Del</kbd> Remove</button>
 			{#each ZONES as z, i (z)}
 				<button class="btn" onclick={() => setZone(z)} disabled={!selected.length}><kbd>{i + 1}</kbd> {ZONE_META[z].name}</button>
@@ -507,6 +516,7 @@
 			<button role="menuitem" onclick={() => (setEta(null), (menu = null))}>Clear estimate<kbd>0</kbd></button>
 		{:else}
 			<button role="menuitem" onclick={() => ((menu = null), rename())}>Rename<kbd>↵</kbd></button>
+			<button role="menuitem" onclick={() => (flip(), (menu = null))}>Flip screen side<kbd>T</kbd></button>
 			{#each ZONES as z, i (z)}
 				<button role="menuitem" onclick={() => (setZone(z), (menu = null))}>{ZONE_META[z].name}<kbd>{i + 1}</kbd></button>
 			{/each}
@@ -547,7 +557,7 @@
 				</dl>
 				<dl>
 					<dt>Layout mode (<kbd>L</kbd>)</dt>
-					<dd><kbd>N</kbd> add PC · <kbd>↵</kbd> rename · <kbd>Del</kbd> remove</dd>
+					<dd><kbd>N</kbd> add · <kbd>↵</kbd> rename · <kbd>Del</kbd> remove · <kbd>T</kbd> flip screen side</dd>
 					<dd><kbd>←↑↓→</kbd> nudge selected PCs</dd>
 					<dd><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> set zone</dd>
 					<dd><kbd>Ctrl</kbd>+<kbd>S</kbd> save layout</dd>

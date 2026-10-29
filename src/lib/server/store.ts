@@ -2,7 +2,7 @@ import { Redis } from '@upstash/redis';
 import { defaultState } from '#lib/defaultLayout.ts';
 import type { CafeState } from '#lib/types.ts';
 
-const KEY = 'gg:state';
+const KEY = 'gg:state:v2';
 
 // Vercel's Upstash integration sets KV_REST_API_*; a direct Upstash DB uses UPSTASH_REDIS_REST_*.
 const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;

@@ -12,8 +12,9 @@
 			{#if showKeys}<kbd>{STATUS_META[s].key}</kbd>{/if}
 		</li>
 	{/each}
-	<li><span class="chip ring pro"></span>Pro booth</li>
+	<li><span class="chip ring sim"></span>Racing sim</li>
 	<li><span class="chip ring console"></span>Console</li>
+	<li><span class="bench"></span>Screens</li>
 </ul>
 
 <style>
@@ -40,7 +41,7 @@
 		display: grid;
 		place-items: center;
 		font-size: 10px;
-		color: #8a90a6;
+		color: var(--muted);
 	}
 	.s-free {
 		background: var(--free);
@@ -53,16 +54,23 @@
 		background: var(--reserved);
 	}
 	.s-offline {
-		background: var(--offline);
+		border: 1.5px dashed var(--line);
 	}
 	.ring {
 		background: transparent;
 		border: 2px solid;
 	}
-	.pro {
-		border-color: var(--pro);
+	.sim {
+		border-color: var(--sim);
 	}
 	.console {
 		border-color: var(--console);
+	}
+	.bench {
+		width: 18px;
+		height: 4px;
+		border-radius: 2px;
+		background: var(--screen);
+		box-shadow: 0 0 6px var(--screen);
 	}
 </style>

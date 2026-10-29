@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { MAX_GRID, STATUSES, ZONES, type PC, type Status, type Zone } from '#lib/types.ts';
+import { FACINGS, MAX_GRID, STATUSES, ZONES, type Facing, type PC, type Status, type Zone } from '#lib/types.ts';
 
 const isCoord = (n: unknown): n is number => Number.isInteger(n) && (n as number) >= 0 && (n as number) <= MAX_GRID;
 
@@ -36,6 +36,7 @@ export function parsePcs(input: unknown): PC[] {
 			id,
 			label,
 			zone: zone as Zone,
+			facing: FACINGS.includes(r.facing as Facing) ? (r.facing as Facing) : 'up',
 			x,
 			y,
 			status,

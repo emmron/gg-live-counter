@@ -3,7 +3,8 @@
 	import SeatMap from '#lib/components/SeatMap.svelte';
 	import Legend from '#lib/components/Legend.svelte';
 	import { ago, counts, etaLabel, etaMinutes } from '#lib/format.ts';
-	import { STATUS_META, ZONES, ZONE_META, type CafeState } from '#lib/types.ts';
+	import { openStatus } from '#lib/hours.ts';
+	import { STATUS_META, ZONE_META, type CafeState } from '#lib/types.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -15,7 +16,17 @@
 	let picked = $state<string | null>(null);
 
 	const c = $derived(counts(cafe.pcs));
+	const pcs = $derived(c.zones.pc);
+	const hours = $derived(openStatus(now));
 	const pickedPc = $derived(cafe.pcs.find((p) => p.id === picked) ?? null);
+	const soonest = $derived.by(() => {
+		if (pcs.free > 0) return null;
+		const mins = cafe.pcs
+			.filter((p) => p.zone === 'pc')
+			.map((p) => etaMinutes(p, now))
+			.filter((m): m is number => m !== null);
+		return mins.length ? Math.min(...mins) : null;
+	});
 
 	async function poll() {
 		try {
@@ -43,21 +54,31 @@
 </script>
 
 <svelte:head>
-	<title>{c.free} PCs free · GG Gaming Joondalup</title>
-	<meta name="description" content="Live PC availability at GG Gaming Cafe, Joondalup." />
+	<title>{pcs.free} PCs free · GG Gaming Lounge Joondalup</title>
+	<meta name="description" content="Live PC, racing sim and console availability at GG Gaming Lounge, Joondalup." />
 </svelte:head>
 
 <main>
 	<header>
-		<div class="brand display"><span class="logo">GG</span> Gaming Cafe <small>Joondalup</small></div>
+		<div class="brand">
+			<span class="gg display">GG</span>
+			<span class="name display">Gaming Lounge</span>
+			<span class="where">Joondalup</span>
+		</div>
+		<p class="hours" class:closed={!hours.open}><span class="dot"></span>{hours.text}</p>
 		<h1 class="display">
-			<span class="big" class:none={c.free === 0}>{c.free}</span>
-			<span class="of">/ {c.total} PCs free</span>
+			<span class="big" class:none={pcs.free === 0}>{pcs.free}</span>
+			<span class="of">/ {pcs.total} PCs free</span>
 		</h1>
+		{#if soonest !== null}
+			<p class="soon">Next PC free in {etaLabel(soonest)}</p>
+		{/if}
 		<div class="zones">
-			{#each ZONES as z (z)}
+			{#each ['sim', 'console'] as const as z (z)}
 				{#if c.zones[z].total}
-					<span class="zone z-{z}">{ZONE_META[z].name} <b>{c.zones[z].free}/{c.zones[z].total}</b></span>
+					<span class="zone z-{z}">
+						{ZONE_META[z].name} <b>{c.zones[z].free}/{c.zones[z].total}</b> free
+					</span>
 				{/if}
 			{/each}
 		</div>
@@ -67,7 +88,7 @@
 		<p class="announce">📣 {cafe.announcement}</p>
 	{/if}
 
-	<section class="map" aria-label="PC seat map">
+	<section class="map" aria-label="Seat map">
 		<SeatMap pcs={cafe.pcs} {now} onseat={(id) => (picked = picked === id ? null : id)} />
 	</section>
 
@@ -78,7 +99,7 @@
 			<span class="st s-{pickedPc.status}">{STATUS_META[pickedPc.status].label}</span>
 			{#if m !== null}· free in {etaLabel(m)}{/if}
 		{:else}
-			<span class="hint">Tap a PC for details</span>
+			<span class="hint">Tap a seat for details</span>
 		{/if}
 	</div>
 
@@ -88,9 +109,9 @@
 		{#if offline}
 			<span class="warn">Connection lost, retrying…</span>
 		{:else}
-			<span class="dot"></span> Live · updated {ago(cafe.updatedAt, now)}
+			<span class="live"></span> Live · updated {ago(cafe.updatedAt, now)}
 		{/if}
-		<p class="small">Refreshes automatically. PCs can fill up fast.</p>
+		<p class="small">3/24 Mercer Ln, Joondalup · <a href="https://gggaminglounge.com.au/">gggaminglounge.com.au</a></p>
 	</footer>
 </main>
 
@@ -101,49 +122,71 @@
 		padding: 1.25rem 16px 2.5rem;
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
+		gap: 1.1rem;
 	}
 	header {
 		text-align: center;
 	}
 	.brand {
-		font-size: 1.15rem;
-		font-weight: 700;
 		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		color: var(--muted);
+		align-items: baseline;
+		gap: 0.45rem;
 	}
-	.brand small {
+	.gg {
+		font-size: 1.7rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+	.name {
 		font-weight: 600;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		font-size: 0.95rem;
+	}
+	.where {
 		color: var(--accent-2);
+		font-size: 0.72rem;
 		letter-spacing: 0.15em;
 		text-transform: uppercase;
-		font-size: 0.75rem;
 	}
-	.logo {
-		background: var(--accent);
-		color: white;
-		border-radius: 8px;
-		padding: 0.05rem 0.45rem;
+	.hours {
+		margin: 0.35rem 0 0;
+		font-size: 0.85rem;
+		color: var(--muted);
+	}
+	.hours .dot {
+		display: inline-block;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--free);
+		margin-right: 0.4rem;
+		vertical-align: 1px;
+	}
+	.hours.closed .dot {
+		background: var(--sim);
 	}
 	h1 {
-		margin: 0.4rem 0 0.6rem;
+		margin: 0.5rem 0 0.4rem;
 		font-weight: 700;
 		line-height: 1;
 	}
 	.big {
-		font-size: clamp(3.5rem, 14vw, 5.5rem);
+		font-size: clamp(3.75rem, 15vw, 6rem);
 		color: var(--free);
 		text-shadow: 0 0 30px var(--free-glow);
 	}
 	.big.none {
-		color: var(--in-use);
+		color: var(--muted);
 		text-shadow: none;
 	}
 	.of {
-		font-size: clamp(1.3rem, 5vw, 1.9rem);
+		font-size: clamp(1.3rem, 5vw, 2rem);
 		color: var(--muted);
+	}
+	.soon {
+		margin: 0 0 0.5rem;
+		color: var(--reserved);
 	}
 	.zones {
 		display: flex;
@@ -162,16 +205,16 @@
 	.zone b {
 		color: var(--text);
 	}
-	.z-pro {
-		border-color: color-mix(in srgb, var(--pro) 50%, var(--line));
+	.z-sim {
+		border-color: color-mix(in srgb, var(--sim) 55%, var(--line));
 	}
 	.z-console {
-		border-color: color-mix(in srgb, var(--console) 50%, var(--line));
+		border-color: color-mix(in srgb, var(--console) 55%, var(--line));
 	}
 	.announce {
 		margin: 0;
-		background: linear-gradient(90deg, rgba(124, 92, 255, 0.25), rgba(34, 211, 238, 0.15));
-		border: 1px solid rgba(124, 92, 255, 0.5);
+		background: linear-gradient(90deg, rgba(100, 108, 253, 0.25), rgba(25, 195, 209, 0.15));
+		border: 1px solid rgba(100, 108, 253, 0.5);
 		border-radius: var(--radius);
 		padding: 0.75rem 1rem;
 		text-align: center;
@@ -180,7 +223,7 @@
 		background: var(--bg-2);
 		border: 1px solid var(--line);
 		border-radius: 20px;
-		padding: 1.25rem clamp(10px, 3vw, 28px) 1.75rem;
+		padding: 1.1rem clamp(6px, 2.5vw, 24px) 1.5rem;
 	}
 	.detail {
 		text-align: center;
@@ -193,7 +236,7 @@
 		color: var(--free);
 	}
 	.st.s-in_use {
-		color: var(--in-use);
+		color: var(--muted);
 	}
 	.st.s-reserved {
 		color: var(--reserved);
@@ -206,7 +249,10 @@
 		color: var(--muted);
 		font-size: 0.85rem;
 	}
-	.dot {
+	footer a {
+		color: var(--accent-2);
+	}
+	.live {
 		display: inline-block;
 		width: 8px;
 		height: 8px;
@@ -225,7 +271,7 @@
 		color: var(--reserved);
 	}
 	.small {
-		font-size: 0.78rem;
-		opacity: 0.8;
+		font-size: 0.8rem;
+		opacity: 0.85;
 	}
 </style>
