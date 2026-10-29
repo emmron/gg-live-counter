@@ -1,14 +1,13 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '#lib/assets/favicon.svg';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
-	<meta name="theme-color" content="#0b0e15" />
+	<link rel="icon" href="/brand/helmet.png" />
+	<meta name="theme-color" content="#000000" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link

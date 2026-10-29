@@ -1,29 +1,40 @@
-/* Palette taken from gggaminglounge.com.au: cyan #19c3d1, indigo #646cfd, slate #2b3242/#35415b */
+/*
+ * GG Gaming Lounge brand, taken from gggaminglounge.com.au:
+ * black #000, electric cyan #1AEEFF (buttons), #19c3d1, indigo #646cfd,
+ * Barlow Semi Condensed uppercase headings, chamfered (cut-corner) buttons and cards.
+ */
 :root {
-	--bg: #0b0e15;
-	--bg-2: #111520;
-	--panel: #1a1f2c;
-	--line: #2b3242;
-	--text: #f2f4f7;
-	--muted: #8a95b3;
-	--accent: #646cfd;
-	--accent-2: #19c3d1;
+	--bg: #000;
+	--bg-2: #07090e;
+	--panel: #0c0f16;
+	--panel-2: #121722;
+	--line: rgba(255, 255, 255, 0.1);
+	--line-2: rgba(255, 255, 255, 0.18);
+	--text: #fff;
+	--muted: #8d97b0;
+	--faded: #727f9f;
+	--cyan: #1aeeff;
+	--cyan-2: #19c3d1;
+	--indigo: #646cfd;
+	--accent: var(--cyan);
+	--accent-2: var(--cyan-2);
 	--display: 'Barlow Semi Condensed', 'Inter', system-ui, sans-serif;
 
-	/* cinema convention: available seats glow, taken seats go dim */
-	--free: #19c3d1;
-	--free-ink: #04262a;
-	--free-glow: rgba(25, 195, 209, 0.4);
-	--in-use: #3a4458;
-	--in-use-ink: #8a95b3;
-	--reserved: #f5a524;
-	--offline: #2b3242;
-	--screen: rgba(226, 232, 255, 0.55);
+	/* seat states: available glows cyan, taken goes dim (cinema convention) */
+	--free: #1aeeff;
+	--free-ink: #002a30;
+	--free-glow: rgba(26, 238, 255, 0.45);
+	--in-use: #262c3a;
+	--in-use-ink: #7b859e;
+	--reserved: #646cfd;
+	--reserved-ink: #fff;
+	--offline: #121722;
 
-	--sim: #ff5a5f;
-	--console: #646cfd;
+	--sim: #ff4d6d;
+	--console: #b18cff;
 
-	--radius: 14px;
+	--cut: 14px;
+	--radius: 10px;
 	color-scheme: dark;
 }
 
@@ -38,19 +49,22 @@ body {
 }
 
 body {
-	background:
-		radial-gradient(1200px 600px at 50% -200px, rgba(100, 108, 253, 0.16), transparent 70%),
-		var(--bg);
+	background: var(--bg);
 	color: var(--text);
 	font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	font-size: 15px;
 	-webkit-font-smoothing: antialiased;
 }
 
 h1,
 h2,
+h3,
 .display {
 	font-family: var(--display);
-	letter-spacing: 0.02em;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.01em;
+	line-height: 1;
 }
 
 button,
@@ -60,41 +74,86 @@ select {
 	color: inherit;
 }
 
+/* Their signature cut-corner shape */
+.cut {
+	clip-path: polygon(
+		var(--cut) 0%,
+		100% 0%,
+		100% calc(100% - var(--cut)),
+		calc(100% - var(--cut)) 100%,
+		0% 100%,
+		0% var(--cut)
+	);
+}
+
 .btn {
-	background: var(--panel);
-	border: 1px solid var(--line);
-	border-radius: 10px;
-	padding: 0.5rem 0.85rem;
-	cursor: pointer;
+	--cut: 10px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	padding: 0.7em 1.4em;
+	border: 0;
+	background: var(--panel-2);
+	color: var(--text);
+	font-family: var(--display);
+	font-weight: 700;
+	font-size: 15px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	text-decoration: none;
 	white-space: nowrap;
+	cursor: pointer;
+	clip-path: polygon(
+		var(--cut) 0%,
+		100% 0%,
+		100% calc(100% - var(--cut)),
+		calc(100% - var(--cut)) 100%,
+		0% 100%,
+		0% var(--cut)
+	);
 	transition:
-		border-color 0.15s,
-		background 0.15s;
+		background 0.2s,
+		color 0.2s,
+		filter 0.2s;
 }
 .btn:hover {
-	border-color: var(--accent);
+	background: #1c2333;
 }
 .btn.primary {
-	background: var(--accent);
-	border-color: var(--accent);
-	color: white;
+	background: var(--cyan);
+	color: #000;
+}
+.btn.primary:hover {
+	background: #fff;
+}
+.btn.white {
+	background: #fff;
+	color: #000;
+}
+.btn.white:hover {
+	background: var(--cyan);
 }
 .btn:disabled {
-	opacity: 0.45;
+	opacity: 0.35;
 	cursor: not-allowed;
+	filter: grayscale(0.5);
 }
 
 kbd {
 	display: inline-block;
-	min-width: 1.6em;
-	padding: 0.05em 0.4em;
-	border: 1px solid var(--line);
+	min-width: 1.5em;
+	padding: 0.05em 0.35em;
+	border: 1px solid var(--line-2);
 	border-bottom-width: 2px;
-	border-radius: 5px;
-	background: var(--bg-2);
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.04);
 	font-family: ui-monospace, Consolas, monospace;
-	font-size: 0.85em;
+	font-size: 0.78em;
+	font-weight: 500;
 	text-align: center;
+	letter-spacing: 0;
+	text-transform: none;
 }
 
 .visually-hidden {

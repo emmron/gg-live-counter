@@ -4,7 +4,7 @@ import { checkPassword, COOKIE, createToken, MAX_AGE } from '#lib/server/auth.ts
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ locals }) => {
-	if (locals.admin) redirect(303, '/admin');
+	if (locals.admin) redirect(303, '/');
 };
 
 export const actions: Actions = {
@@ -21,6 +21,6 @@ export const actions: Actions = {
 			secure: !dev,
 			maxAge: MAX_AGE
 		});
-		redirect(303, '/admin');
+		redirect(303, '/');
 	}
 };

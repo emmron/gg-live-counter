@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { FACINGS, MAX_GRID, STATUSES, ZONES, type Facing, type PC, type Status, type Zone } from '#lib/types.ts';
+import { FACINGS, FLOORS, MAX_GRID, STATUSES, ZONES, type Facing, type Floor, type PC, type Status, type Zone } from '#lib/types.ts';
 
 const isCoord = (n: unknown): n is number => Number.isInteger(n) && (n as number) >= 0 && (n as number) <= MAX_GRID;
 
@@ -19,12 +19,13 @@ export function parsePcs(input: unknown): PC[] {
 		const r = (raw ?? {}) as Record<string, unknown>;
 		const label = typeof r.label === 'string' ? r.label.trim() : '';
 		const { id, zone, status, x, y } = r;
+		const floor: Floor = FLOORS.includes(r.floor as Floor) ? (r.floor as Floor) : 'ground';
 		if (typeof id !== 'string' || !/^[\w-]{1,40}$/.test(id)) error(400, 'Bad id');
 		if (!label || label.length > 6) error(400, `Bad label "${label}" (1–6 chars)`);
 		if (!ZONES.includes(zone as Zone)) error(400, 'Bad zone');
 		if (!isStatus(status)) error(400, 'Bad status');
 		if (!isCoord(x) || !isCoord(y)) error(400, 'Bad position');
-		const cell = `${x},${y}`;
+		const cell = `${floor}:${x},${y}`;
 		const key = label.toUpperCase();
 		if (ids.has(id) || labels.has(key) || cells.has(cell)) error(400, `Duplicate PC or position (${label})`);
 		ids.add(id);
@@ -36,6 +37,7 @@ export function parsePcs(input: unknown): PC[] {
 			id,
 			label,
 			zone: zone as Zone,
+			floor,
 			facing: FACINGS.includes(r.facing as Facing) ? (r.facing as Facing) : 'up',
 			x,
 			y,

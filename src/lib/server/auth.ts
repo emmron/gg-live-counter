@@ -2,7 +2,7 @@ import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { dev } from '$app/env';
 
 export const COOKIE = 'gg_admin';
-export const MAX_AGE = 60 * 60 * 24 * 30; // 30 days
+export const MAX_AGE = 60 * 60 * 24 * 365; // stay logged in on the front-desk PC for a year
 
 function adminPassword(): string | undefined {
 	// Dev convenience only: production never falls back.

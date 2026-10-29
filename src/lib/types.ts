@@ -4,7 +4,10 @@ export type Status = (typeof STATUSES)[number];
 export const ZONES = ['pc', 'sim', 'console'] as const;
 export type Zone = (typeof ZONES)[number];
 
-/** Which side of the seat the screen is on (benches are back-to-back, screens in the middle). */
+export const FLOORS = ['ground', 'upstairs'] as const;
+export type Floor = (typeof FLOORS)[number];
+
+/** Which side of the seat the screen is on (up = towards the top of the map). */
 export const FACINGS = ['up', 'down'] as const;
 export type Facing = (typeof FACINGS)[number];
 
@@ -12,6 +15,7 @@ export interface PC {
 	id: string;
 	label: string;
 	zone: Zone;
+	floor: Floor;
 	/** Grid column, 0-based */
 	x: number;
 	/** Grid row, 0-based */
@@ -40,6 +44,12 @@ export const ZONE_META: Record<Zone, { name: string; unit: string; prefix: strin
 	pc: { name: 'Gaming PCs', unit: 'PCs', prefix: 'PC' },
 	sim: { name: 'Racing sims', unit: 'sims', prefix: 'SIM' },
 	console: { name: 'Consoles', unit: 'consoles', prefix: 'TV' }
+};
+
+/** Map labels: top/bottom are the long walls, side is the right-hand end of the hall. */
+export const FLOOR_META: Record<Floor, { name: string; top: string; bottom: string; side: string }> = {
+	ground: { name: 'Ground floor', top: 'WALL · SCREENS FACE THIS WAY', bottom: '', side: 'ENTRANCE' },
+	upstairs: { name: 'Upstairs mezzanine', top: 'WALL · SCREENS FACE THIS WAY', bottom: 'BACK MEZZANINE WALL', side: '' }
 };
 
 /** Largest grid coordinate allowed (0..MAX_GRID) */

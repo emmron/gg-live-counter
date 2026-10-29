@@ -1,40 +1,37 @@
-# GG Status: live PC availability for GG Gaming Cafe, Joondalup
+# GG Status: live seat availability for GG Gaming Lounge, Joondalup
 
-A cinema-seat-picker-style map showing which PCs are free. The public page is `/`. The owner updates PCs at `/admin`.
+Customers open the site and see which PCs are free, on a map of the actual lounge
+(ground floor rows A–B, upstairs rows C–E, racing sims and consoles).
 
-## Stack
-SvelteKit 3 (Svelte 5) · Upstash Redis (one JSON key, `gg:state`) · deployed on Vercel.
-The public page polls `/api/status` every 5s.
+The owner's front-desk PC sees the same site split in half:
+- **Left:** the seat map. **Click a seat** when someone sits down or leaves (or type `B7` + Enter).
+  Hold and drag to switch a whole row. `Ctrl+Z` or the Undo pop-up reverts.
+- **Right:** exactly what customers see, updating instantly.
+
+The floor plan is set up once at **/admin/layout** (drag seats, rename, add/remove, flip which side the screen is on).
+
+## Who gets the owner view
+- Any device that has logged in once at **/admin/login** (stays logged in for a year), **or**
+- Any IP listed in `ADMIN_IPS`.
+  ⚠ A cafe's public IP is shared by everyone on its wifi. Only use `ADMIN_IPS` if customers are on a different network; otherwise just log in once on the front-desk PC.
+- `localhost` always gets it during development.
 
 ## Run locally
 ```sh
 npm install
-npm run dev          # http://localhost:5173. Admin password is "admin" when ADMIN_PASSWORD is unset
+npm run dev        # http://localhost:5173 (owner view on localhost; add ?preview for the customer view)
 npm run check
 ```
-Without Redis env vars, state is kept in memory and resets when the server restarts.
-
-## Admin cheat sheet (`/admin`, press `?` for help)
-| | |
-|---|---|
-| Click / Shift-click / drag a box | select PCs |
-| Right-click | quick menu |
-| `F` `U` `R` `O` | Free · In use · Reserved · Offline |
-| `1`–`9` | "free in 10–90 min" (marks the PC in use) · `0` clears |
-| Arrows / Shift+arrows | move / extend the selection |
-| `A` | select the whole zone · `Ctrl+A` selects all |
-| `/` | jump to a PC by label |
-| `Ctrl+Z` | undo |
-| `L` | layout mode: drag to move/swap, `N` add, `Enter` rename, `Del` remove, `1/2/3` zone (PC/sim/console), `T` flip screen side, `Ctrl+S` save |
+Without Redis env vars, data is kept in memory and resets when the server restarts. Dev password is `admin`.
 
 ## Deploy (Vercel)
-1. Push this repo to GitHub, then use **Add New → Project** on Vercel and import it (framework is detected as SvelteKit).
-2. **Storage → Marketplace → Upstash (Redis)**, create a free DB and connect it to the project. This sets the env vars.
-3. **Settings → Environment Variables**: add `ADMIN_PASSWORD` and `SESSION_SECRET`, then redeploy.
-4. **Settings → Domains**: add `status.<theirdomain>.com`. At the domain's DNS provider, add
+1. Push to GitHub, then on Vercel use **Add New → Project** and import it.
+2. **Storage → Marketplace → Upstash (Redis)**: create a free DB and connect it (sets the env vars).
+3. **Settings → Environment Variables**: `ADMIN_PASSWORD`, `SESSION_SECRET` (long random string), optional `ADMIN_IPS`.
+4. **Settings → Domains**: add `status.gggaminglounge.com.au`. At the DNS provider, add
    `CNAME  status  →  cname.vercel-dns.com`.
 
-The first request seeds a floor plan based on the venue: 80 PCs on 4 back-to-back benches (rows A–H, 10 per side), 3 racing sims, 2 PS5 + 2 Xbox. Bench lengths, sim/console spots and console count are best guesses, so fix them in layout mode (`T` flips which side a seat's screen is on).
+Brand assets in `static/brand/` (logo, helmet, Spartan art, mesh gradient) come from gggaminglounge.com.au.
 
-> Note: `npm run build` on Windows fails at the final Vercel packaging step (symlink permission) unless
-> Developer Mode is on. This doesn't affect Vercel's own Linux builds.
+> `npm run build` on Windows fails at the last Vercel packaging step (symlink permission) unless
+> Developer Mode is on. Vercel's own Linux builds are unaffected.
